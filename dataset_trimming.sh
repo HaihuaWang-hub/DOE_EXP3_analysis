@@ -25,7 +25,8 @@ cd $dir/rawdata
 ls $dir/rawdata/*.gz|cut -d "_" -f 1,2,3,4,5,6,7 |sort -u |while read id;do
    fastqc ${id}_001.fastq.gz \
    -t 3 \
-   -o $dir/fastqc_rawdata
+   -o $dir/fastqc_rawdata 
+   
 done
    
 
@@ -39,15 +40,15 @@ cd $dir/rawdata
 
 
 ls *.gz|cut -d"_" -f 1,2,3 |sort -u |while read id;do
-trim_galore -q 25 --phred33 --stringency 3 --length 25 \
+trim_galore -q 25 --phred33 --stringency 3 --length 100 \
 --paired ${id}_R1_001.fastq.gz    ${id}_R2_001.fastq.gz \
 --gzip \
---cores 2 \
--o ../cleandata_trimglore 
+--cores 10 \
+-o ../cleandata_trimglore  
+
 done 
 
-
-
+2>$dir/3_suillus_alignment/1_bowtie2_log_file/${id}_bowtie2.log
 
 
 ls *.gz|cut -d"_" -f 1,2,3 |sort -u |while read id;do
