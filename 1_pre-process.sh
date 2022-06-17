@@ -62,7 +62,7 @@ remove_rRNA(){
      --ref /home/microbiome/tools/sortmerna/data/rRNA_databases/silva-bac-23s-id98.fasta \
      --ref /home/microbiome/tools/sortmerna/data/rRNA_databases/silva-euk-18s-id95.fasta \
      --ref /home/microbiome/tools/sortmerna/data/rRNA_databases/silva-euk-28s-id98.fasta \
-     --paired_out   --zip-out \
+     --paired_out --out2  --zip-out \
      --reads cleandata/${base}_val_1.fq.gz \
      --reads cleandata/${base}_val_2.fq.gz \
      --fastx  --aligned rRNA_removed_data/$base/$base.rRNA \
@@ -75,6 +75,6 @@ export -f remove_rRNA
 time parallel -j 2 --eta --load 100% --noswap  remove_rRNA ::: $(ls cleandata/_val_1.fq.gz |cut -d "/" -f 2)
 
 
-#sub-sample the reads
+#sub-sample the reads （seqtk）
 #############################################################################
 
