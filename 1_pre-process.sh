@@ -49,7 +49,7 @@ done
 ############################################################################################
 mkdir rRNA_removed_data
 remove_rRNA(){
-  name=$1
+ nohup for name in $(ls cleandata/*_val_1.fq.gz |cut -d "/" -f 2); do
   base=$(basename $name _val_1.fq.gz)
   if [ ! -f rRNA_removed_data/$base.non.rRNA_fwd.fq.gz ]; then
       mkdir rRNA_removed_data/$base
@@ -71,11 +71,13 @@ remove_rRNA(){
        --threads 24
      echo "processing of ${base} is done"
    fi
+ done &
 }
 
 export -f remove_rRNA
 
-nohup time parallel -j 2 --eta --load 100% --noswap  remove_rRNA ::: $(ls cleandata/*_val_1.fq.gz |cut -d "/" -f 2) &
+
+#nohup time parallel -j 2 --eta --load 100% --noswap  remove_rRNA ::: $(ls cleandata/*_val_1.fq.gz |cut -d "/" -f 2) &
 
 
 #sub-sample the reads （seqtk）https://cloud.tencent.com/developer/article/1674827
