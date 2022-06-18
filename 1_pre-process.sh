@@ -51,28 +51,31 @@ mkdir rRNA_removed_data
 remove_rRNA(){
   name=$1
   base=$(basename $name _val_1.fq.gz)
-  mkdir rRNA_removed_data/$base
-  sortmerna \
-     --workdir rRNA_removed_data/$base \
-     --ref /home/microbiome/tools/sortmerna/data/rRNA_databases/rfam-5.8s-database-id98.fasta \
-     --ref /home/microbiome/tools/sortmerna/data/rRNA_databases/rfam-5s-database-id98.fasta \
-     --ref /home/microbiome/tools/sortmerna/data/rRNA_databases/silva-arc-16s-id95.fasta \
-     --ref /home/microbiome/tools/sortmerna/data/rRNA_databases/silva-arc-23s-id98.fasta \
-     --ref /home/microbiome/tools/sortmerna/data/rRNA_databases/silva-bac-16s-id90.fasta \
-     --ref /home/microbiome/tools/sortmerna/data/rRNA_databases/silva-bac-23s-id98.fasta \
-     --ref /home/microbiome/tools/sortmerna/data/rRNA_databases/silva-euk-18s-id95.fasta \
-     --ref /home/microbiome/tools/sortmerna/data/rRNA_databases/silva-euk-28s-id98.fasta \
-     --paired_out --out2  --zip-out \
-     --reads cleandata/${base}_val_1.fq.gz \
-     --reads cleandata/${base}_val_2.fq.gz \
-     --fastx  --aligned rRNA_removed_data/$base/$base.rRNA \
-     --other rRNA_removed_data/$base.non.rRNA \
-     --threads 24
+  if [ ! -f rRNA_removed_data/$base.non.rRNA_fwd.fq.gz ]; then
+      mkdir rRNA_removed_data/$base
+     sortmerna \
+       --workdir rRNA_removed_data/$base \
+       --ref /home/microbiome/tools/sortmerna/data/rRNA_databases/rfam-5.8s-database-id98.fasta \
+       --ref /home/microbiome/tools/sortmerna/data/rRNA_databases/rfam-5s-database-id98.fasta \
+       --ref /home/microbiome/tools/sortmerna/data/rRNA_databases/silva-arc-16s-id95.fasta \
+       --ref /home/microbiome/tools/sortmerna/data/rRNA_databases/silva-arc-23s-id98.fasta \
+       --ref /home/microbiome/tools/sortmerna/data/rRNA_databases/silva-bac-16s-id90.fasta \
+       --ref /home/microbiome/tools/sortmerna/data/rRNA_databases/silva-bac-23s-id98.fasta \
+       --ref /home/microbiome/tools/sortmerna/data/rRNA_databases/silva-euk-18s-id95.fasta \
+       --ref /home/microbiome/tools/sortmerna/data/rRNA_databases/silva-euk-28s-id98.fasta \
+       --paired_out --out2  --zip-out \
+       --reads cleandata/${base}_val_1.fq.gz \
+       --reads cleandata/${base}_val_2.fq.gz \
+       --fastx  --aligned rRNA_removed_data/$base/$base.rRNA \
+       --other rRNA_removed_data/$base.non.rRNA \
+       --threads 24
+     echo "processing of ${base} is done"
+   fi
 }
 
 export -f remove_rRNA
 
-time parallel -j 2 --eta --load 100% --noswap  remove_rRNA ::: $(ls cleandata/*_val_1.fq.gz |cut -d "/" -f 2)
+nohup time parallel -j 2 --eta --load 100% --noswap  remove_rRNA ::: $(ls cleandata/*_val_1.fq.gz |cut -d "/" -f 2) &
 
 
 #sub-sample the reads （seqtk）https://cloud.tencent.com/developer/article/1674827
