@@ -72,7 +72,7 @@ remove_rRNA(){
 
 export -f remove_rRNA
 
-time parallel -j 2 --eta --load 100% --noswap  remove_rRNA ::: $(ls cleandata/_val_1.fq.gz |cut -d "/" -f 2)
+time parallel -j 2 --eta --load 100% --noswap  remove_rRNA ::: $(ls cleandata/*_val_1.fq.gz |cut -d "/" -f 2)
 
 
 #sub-sample the reads （seqtk）https://cloud.tencent.com/developer/article/1674827
