@@ -78,9 +78,26 @@ export -f remove_rRNA
 
 
 #nohup time parallel -j 2 --eta --load 100% --noswap  remove_rRNA ::: $(ls cleandata/*_val_1.fq.gz |cut -d "/" -f 2) &
+#
 
+#calculate the sequence number
+#############################################################################
+rm -f reads_num
+for i in cleandata/*.gz; do
+   num=$(cat $i |pigz -d | grep -c '^+$') 
+   echo -e "${i}\t${num}" >> reads_num
+done
 
 #sub-sample the reads （seqtk）https://cloud.tencent.com/developer/article/1674827
 #############################################################################
-  seqtk sample -s 100 read1.fq.gz 10000 | gzip > sub1.fq.gz
-  seqtk sample -s 100 read2.fq.gz 10000 | gzip > sub2.fq.gz
+for i in cleandata/*_val_1.fq.gz; do
+  base=$(basename $i _val_1.fq.gz)
+  seed=$(echo $RANDOM % 100 + 1 | bc)
+  seqtk sample -s $seed cleandata/${base}_val_1.fq.gz 6000000 | pigz > subsample_data/${base}.subsample_R1.fq.gz
+  seqtk sample -s $seed cleandata/${base}_val_2.fq.gz 6000000 | pigz > subsample_data/${base}.subsample_R2.fq.gz
+  echo "${base} finished"
+done
+
+
+
+
