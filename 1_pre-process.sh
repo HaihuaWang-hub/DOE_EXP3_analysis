@@ -105,11 +105,9 @@ bowtie2-build --threads 4  Suicot1_AssemblyScaffolds_Repeatmasked.fasta Suicot_g
 
 #mapping
 ##################################################################
-work_dir="/home/microbiome/data_storage/SATA2/RNA_data/DOE_EXP3_JGI"
-
 
 function run_alignment () {
-work_dir="/home/microbiome/data_storage/SATA2/RNA_data/DOE_EXP3"
+work_dir="/home/microbiome/data_storage/SATA2/RNA_data/DOE_EXP3_JGI"
 
 dir=$work_dir
 Suicot_genome="/home/microbiome/data_storage/SATA2/RNA_data/genome_reference/Suicot_genome"
