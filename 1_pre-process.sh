@@ -100,4 +100,80 @@ done
 
 
 
+#reference preparation
+bowtie2-build --threads 4  Suicot1_AssemblyScaffolds_Repeatmasked.fasta Suicot_genome
+
+#mapping
+##################################################################
+Suicot_genome="/home/microbiome/data_storage/SATA2/RNA_data/genome_reference/Suicot_genome"
+gtf_suicot="/home/microbiome/data_storage/SATA2/RNA_data/genome_reference/Suicot1_GeneCatalog_20171209.gtf"
+dir="/home/microbiome/data_storage/SATA2/RNA_data/DOE_EXP3_JGI"
+
+mkdir $dir/3_suillus_alignment
+mkdir $dir/3_suillus_alignment/1_suillus_aligned_fastq
+mkdir $dir/3_suillus_alignment/1_bowtie2_met_file
+mkdir $dir/3_suillus_alignment/1_bowtie2_log_file
+mkdir $dir/3_suillus_alignment/2_bam_flagstat_file
+mkdir $dir/3_suillus_alignment/3_suillus_count_file
+mkdir $dir/3_suillus_alignment/2_suillus_bam_file
+mkdir $dir/3_suillus_alignment/1_suillus_unaligned_fastq
+
+
+ls subsample_data/*_R1.fq.gz |while read id; do
+  base=$(basename $id .subsample_R1.fq.gz)
+  if [ -f "$dir/3_suillus_alignment/3_suillus_count_file/${base}_suillus_gene_id_count.txt" ]; then
+      echo "${base} has been analyzed"
+  else
+     mkdir $dir/3_suillus_alignment/${base}.temp
+     time bowtie2 -p 24 -x $Suicot_genome \
+                  -1 subsample_data/${base}.subsample_R1.fq.gz \
+                  -2 subsample_data/${base}.subsample_R2.fq.gz \
+                  -S $dir/3_suillus_alignment/${base}.temp/${base}_suillus.sam \
+                  --al-conc-gz $dir/3_suillus_alignment/1_suillus_aligned_fastq/${base}_aligned.fastq.gz \
+                  --un-conc-gz $dir/3_suillus_alignment/1_suillus_unaligned_fastq/${base}_unaligned.fastq.gz \
+                  --met-file $dir/3_suillus_alignment/1_bowtie2_met_file/${base}_met.txt \
+                  2>$dir/3_suillus_alignment/1_bowtie2_log_file/${base}_bowtie2.log
+
+     samtools sort -o bam -@ 3 -o $dir/3_suillus_alignment/2_suillus_bam_file/${base}_suillus.bam $dir/3_suillus_alignment/${base}.temp/${base}_suillus.sam
+     samtools flagstat -@ 3 $dir/3_suillus_alignment/${base}.temp/${base}_suillus.sam > $dir/3_suillus_alignment/2_bam_flagstat_file/${base}.flagstat
+     featureCounts -t exon -F GTF -g gene_id -T 4 -a $gtf_suicot -o $dir/3_suillus_alignment/3_suillus_count_file/${base}_suillus_gene_id_count.txt \
+                    $dir/3_suillus_alignment/2_suillus_bam_file/${base}_suillus.bam
+     rm -rf $dir/3_suillus_alignment/${base}.temp
+     mv $dir/3_suillus_alignment/1_suillus_aligned_fastq/${base}_aligned.fastq.1.gz $dir/3_suillus_alignment/1_suillus_aligned_fastq/${base}_aligned_R1.fastq.gz
+     mv $dir/3_suillus_alignment/1_suillus_aligned_fastq/${base}_aligned.fastq.2.gz $dir/3_suillus_alignment/1_suillus_aligned_fastq/${base}_aligned_R2.fastq.gz
+  fi
+done
+
+
+gtf_suicot="$dir/reference/Suicot1_GeneCatalog_20171209.gtf"
+gtf_suicot="$dir/reference/Suicot1_all_genes_20171209.gff"
+featureCounts -t exon -F GFF -f -p -g name -M -T 4 -a $gtf_suicot -o $dir/3_suillus_alignment/3_suillus_count_file/suillus_all_gene_id_count.txt *.bam  1>$dir/3_suillus_alignment/3_suillus_count_file/counts.all_gene_id.log 2>&1
+featureCounts -t exon -F GFF -f -p -O -g name -M -T 4 -a $gtf_suicot -o $dir/3_suillus_alignment/3_suillus_count_file/suillus_all_gene_id_count_overlap.txt *.bam  1>$dir/3_suillus_alignment/3_suillus_count_file/counts.all_gene_id_overlap.log 2>&1
+featureCounts -t exon -F GTF -g gene_id -p -M -T 4 -a $gtf_suicot -o $dir/3_suillus_alignment/3_suillus_count_file/suillus_catalog_gene_id_count.txt *.bam  1>$dir/3_suillus_alignment/3_suillus_count_file/counts.catalog_gene_id.log 2>&1
+featureCounts -t exon -F GTF -g gene_id -p -O -M -T 4 -a $gtf_suicot -o $dir/3_suillus_alignment/3_suillus_count_file/suillus_catalog_gene_id_count_overlap.txt *.bam  1>$dir/3_suillus_alignment/3_suillus_count_file/counts.catalog_gene_id_overlap.log 2>&1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
