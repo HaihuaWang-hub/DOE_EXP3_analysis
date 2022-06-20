@@ -151,12 +151,13 @@ export -f run_alignment
 
 nohup bash -c run_alignment  & 
 
-gtf_suicot="$dir/reference/Suicot1_GeneCatalog_20171209.gtf"
+dir="/home/microbiome/data_storage/SATA2/RNA_data/DOE_EXP3"
+gtf_suicot="/home/microbiome/data_storage/SATA2/RNA_data/genome_reference/Suicot1_GeneCatalog_20171209.gtf"
 gtf_suicot="$dir/reference/Suicot1_all_genes_20171209.gff"
-featureCounts -t exon -F GFF -f -p -g name -M -T 4 -a $gtf_suicot -o $dir/3_suillus_alignment/3_suillus_count_file/suillus_all_gene_id_count.txt *.bam  1>$dir/3_suillus_alignment/3_suillus_count_file/counts.all_gene_id.log 2>&1
-featureCounts -t exon -F GFF -f -p -O -g name -M -T 4 -a $gtf_suicot -o $dir/3_suillus_alignment/3_suillus_count_file/suillus_all_gene_id_count_overlap.txt *.bam  1>$dir/3_suillus_alignment/3_suillus_count_file/counts.all_gene_id_overlap.log 2>&1
-featureCounts -t exon -F GTF -g gene_id -p -M -T 4 -a $gtf_suicot -o $dir/3_suillus_alignment/3_suillus_count_file/suillus_catalog_gene_id_count.txt *.bam  1>$dir/3_suillus_alignment/3_suillus_count_file/counts.catalog_gene_id.log 2>&1
-featureCounts -t exon -F GTF -g gene_id -p -O -M -T 4 -a $gtf_suicot -o $dir/3_suillus_alignment/3_suillus_count_file/suillus_catalog_gene_id_count_overlap.txt *.bam  1>$dir/3_suillus_alignment/3_suillus_count_file/counts.catalog_gene_id_overlap.log 2>&1
+#featureCounts -t exon -F GFF -f -p -g name -M -T 4 -a $gtf_suicot -o $dir/3_suillus_alignment/3_suillus_count_file/suillus_all_gene_id_count.txt *.bam  1>$dir/3_suillus_alignment/3_suillus_count_file/counts.all_gene_id.log 2>&1
+#featureCounts -t exon -F GFF -f -p -O -g name -M -T 4 -a $gtf_suicot -o $dir/3_suillus_alignment/3_suillus_count_file/suillus_all_gene_id_count_overlap.txt *.bam  1>$dir/3_suillus_alignment/3_suillus_count_file/counts.all_gene_id_overlap.log 2>&1
+featureCounts -t exon -F GTF -g gene_id -p -M -T 24 -a $gtf_suicot -o $dir/3_suillus_alignment/3_suillus_count_file/suillus_catalog_gene_id_count.txt *.bam  1>$dir/3_suillus_alignment/3_suillus_count_file/counts.catalog_gene_id.log 2>&1
+#featureCounts -t exon -F GTF -g gene_id -p -O -M -T 4 -a $gtf_suicot -o $dir/3_suillus_alignment/3_suillus_count_file/suillus_catalog_gene_id_count_overlap.txt *.bam  1>$dir/3_suillus_alignment/3_suillus_count_file/counts.catalog_gene_id_overlap.log 2>&1
 
 
 
