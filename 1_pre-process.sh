@@ -108,7 +108,7 @@ bowtie2-build --threads 4  Suicot1_AssemblyScaffolds_Repeatmasked.fasta Suicot_g
 work_dir="/home/microbiome/data_storage/SATA2/RNA_data/DOE_EXP3_JGI"
 
 
-run_alignment () {
+function run_alignment () {
 dir=$work_dir
 Suicot_genome="/home/microbiome/data_storage/SATA2/RNA_data/genome_reference/Suicot_genome"
 gtf_suicot="/home/microbiome/data_storage/SATA2/RNA_data/genome_reference/Suicot1_GeneCatalog_20171209.gtf"
@@ -148,8 +148,8 @@ ls subsample_data/*_R1.fq.gz |while read id; do
 done
 }
 export -f run_alignment
-run_alignment $work_dir
 
+nohup bash -c run_alignment $work_dir & 
 
 gtf_suicot="$dir/reference/Suicot1_GeneCatalog_20171209.gtf"
 gtf_suicot="$dir/reference/Suicot1_all_genes_20171209.gff"
