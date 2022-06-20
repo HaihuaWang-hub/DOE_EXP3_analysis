@@ -109,6 +109,8 @@ work_dir="/home/microbiome/data_storage/SATA2/RNA_data/DOE_EXP3_JGI"
 
 
 function run_alignment () {
+work_dir="/home/microbiome/data_storage/SATA2/RNA_data/DOE_EXP3_JGI"
+
 dir=$work_dir
 Suicot_genome="/home/microbiome/data_storage/SATA2/RNA_data/genome_reference/Suicot_genome"
 gtf_suicot="/home/microbiome/data_storage/SATA2/RNA_data/genome_reference/Suicot1_GeneCatalog_20171209.gtf"
