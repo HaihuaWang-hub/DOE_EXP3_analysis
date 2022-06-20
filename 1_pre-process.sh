@@ -109,7 +109,7 @@ work_dir="/home/microbiome/data_storage/SATA2/RNA_data/DOE_EXP3_JGI"
 
 
 function run_alignment () {
-work_dir="/home/microbiome/data_storage/SATA2/RNA_data/DOE_EXP3_JGI"
+work_dir="/home/microbiome/data_storage/SATA2/RNA_data/DOE_EXP3"
 
 dir=$work_dir
 Suicot_genome="/home/microbiome/data_storage/SATA2/RNA_data/genome_reference/Suicot_genome"
@@ -151,7 +151,7 @@ done
 }
 export -f run_alignment
 
-nohup bash -c run_alignment $work_dir & 
+nohup bash -c run_alignment  & 
 
 gtf_suicot="$dir/reference/Suicot1_GeneCatalog_20171209.gtf"
 gtf_suicot="$dir/reference/Suicot1_all_genes_20171209.gff"
