@@ -105,9 +105,13 @@ bowtie2-build --threads 4  Suicot1_AssemblyScaffolds_Repeatmasked.fasta Suicot_g
 
 #mapping
 ##################################################################
+work_dir="/home/microbiome/data_storage/SATA2/RNA_data/DOE_EXP3_JGI"
+
+
+run_alignment () {
+dir=$work_dir
 Suicot_genome="/home/microbiome/data_storage/SATA2/RNA_data/genome_reference/Suicot_genome"
 gtf_suicot="/home/microbiome/data_storage/SATA2/RNA_data/genome_reference/Suicot1_GeneCatalog_20171209.gtf"
-dir="/home/microbiome/data_storage/SATA2/RNA_data/DOE_EXP3_JGI"
 
 mkdir $dir/3_suillus_alignment
 mkdir $dir/3_suillus_alignment/1_suillus_aligned_fastq
@@ -117,7 +121,6 @@ mkdir $dir/3_suillus_alignment/2_bam_flagstat_file
 mkdir $dir/3_suillus_alignment/3_suillus_count_file
 mkdir $dir/3_suillus_alignment/2_suillus_bam_file
 mkdir $dir/3_suillus_alignment/1_suillus_unaligned_fastq
-
 
 ls subsample_data/*_R1.fq.gz |while read id; do
   base=$(basename $id .subsample_R1.fq.gz)
@@ -143,6 +146,9 @@ ls subsample_data/*_R1.fq.gz |while read id; do
      mv $dir/3_suillus_alignment/1_suillus_aligned_fastq/${base}_aligned.fastq.2.gz $dir/3_suillus_alignment/1_suillus_aligned_fastq/${base}_aligned_R2.fastq.gz
   fi
 done
+}
+export -f run_alignment
+run_alignment $work_dir
 
 
 gtf_suicot="$dir/reference/Suicot1_GeneCatalog_20171209.gtf"
