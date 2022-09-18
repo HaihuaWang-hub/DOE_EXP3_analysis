@@ -252,7 +252,7 @@ ls *.gz|cut -d"_" -f 1,2,3 |sort -u  |while read id;do
 echo $id
 fwd="${id}_val_1.fq.gz"
 rev="${id}_val_2.fq.gz"
-if [ -f "$dir/4_alignment_pinus/3_pinus_count_express/${id}.bam.tab" ]; then
+if [ -f "$dir/4_alignment_pinus/1_pinus_unaligned_fastq/${id}_unaligned_R2.fastq.gz" ]; then
     echo "${id} has been analyzed"
     else
 mkdir $dir/4_alignment_pinus/${id}.temp
