@@ -228,6 +228,7 @@ rm ${id}_Suicot.sam
 dir=/Volumes/T7/plant_emf_sap_interaction
 mkdir $dir/4_alignment_pinus
 mkdir $dir/4_alignment_pinus/1_pinus_aligned_fastq
+mkdir $dir/4_alignment_pinus/1_pinus_unaligned_fastq
 mkdir $dir/4_alignment_pinus/1_bowtie2_met_file
 mkdir $dir/4_alignment_pinus/1_bowtie2_log_file
 mkdir $dir/4_alignment_pinus/2_bam_flagstat_file
@@ -237,24 +238,27 @@ mkdir $dir/4_alignment_pinus/3_pinus_count_featurecount
 
 bowtie2-build --threads 4 $dir/reference/TrPtA_269336_P_taeda_mRNAdatabase_328662.fasta $dir/reference/Pintaeda_genome
 
-Pintaeda_genome="$dir/reference/Pintaeda_genome"
-gtf_pintaeda="$dir/reference/TrPtA_269336_P_taeda_mRNAdatabase_328662.gtf"
-Pintaeda_transcript="$dir/reference/TrPtA_269336_P_taeda_mRNAdatabase_328662.fasta"
+#Pintaeda_genome="$dir/reference/Pintaeda_genome"
+#gtf_pintaeda="$dir/reference/TrPtA_269336_P_taeda_mRNAdatabase_328662.gtf"
+#Pintaeda_transcript="$dir/reference/TrPtA_269336_P_taeda_mRNAdatabase_328662.fasta"
 
 dir=/Volumes/T7/plant_emf_sap_interaction
 cd $dir/1_cleandata
+
 ls *.gz|cut -d"_" -f 1,2,3 |sort -u  |while read id;do
+echo $id
+fwd="${id}_val_1.fq.gz"
+rev="${id}_val_2.fq.gz"
 if [ -f "$dir/4_alignment_pinus/3_pinus_count_express/${id}.bam.tab" ]; then
     echo "${id} has been analyzed"
     else
-    
 mkdir $dir/4_alignment_pinus/${id}.temp
-time bowtie2 -p 4 -x $Pintaeda_genome \
-   -1 ${id}_paired_R1.fq.gz \
-   -2 ${id}_paired_R2.fq.gz \
+time bowtie2 -p 24 -x $Pintaeda_genome \
+   -1  $fwd \
+   -2  $rev \
    -S $dir/4_alignment_pinus/${id}.temp/${id}_pinus.sam \
    --al-conc-gz $dir/4_alignment_pinus/1_pinus_aligned_fastq/${id}_aligned.fastq.gz \
-   --un-conc-gz $dir/4_alignment_pinus/${id}.temp/${id}_unaligned.fastq.gz \
+   --un-conc-gz $dir/4_alignment_pinus/1_pinus_unaligned_fastq/${id}_unaligned.fastq.gz \
    --met-file $dir/4_alignment_pinus/1_bowtie2_met_file/${id}_met.txt \
    2>$dir/4_alignment_pinus/1_bowtie2_log_file/${id}_bowtie2.log
 
@@ -266,7 +270,7 @@ featureCounts -t exon -F GTF -g gene_id -T 24 -a $gtf_pintaeda \
    $dir/4_alignment_pinus/2_bam_file/${id}_pinus.bam  \
    1>$dir/4_alignment_pinus/3_pinus_count_featurecount/${id}_pinus.log 2>&1
 
-samtools sort -n -@ 4 -o $dir/4_alignment_pinus/${id}.temp/${id}_pinus.sort.bam $dir/4_alignment_pinus/2_bam_file/${id}_pinus.bam
+samtools sort -n -@ 24 -o $dir/4_alignment_pinus/${id}.temp/${id}_pinus.sort.bam $dir/4_alignment_pinus/2_bam_file/${id}_pinus.bam
 express -o $dir/4_alignment_pinus/3_pinus_count_express $Pintaeda_transcript $dir/4_alignment_pinus/${id}.temp/${id}_pinus.sort.bam
 mv $dir/4_alignment_pinus/3_pinus_count_express/results.xprs $dir/4_alignment_pinus/3_pinus_count_express/${id}.bam.tab
 mv $dir/4_alignment_pinus/3_pinus_count_express/params.xprs  $dir/4_alignment_pinus/3_pinus_count_express/${id}.bam.params.xprs
@@ -274,6 +278,8 @@ mv $dir/4_alignment_pinus/3_pinus_count_express/params.xprs  $dir/4_alignment_pi
 rm -rf $dir/4_alignment_pinus/${id}.temp
 mv $dir/4_alignment_pinus/1_pinus_aligned_fastq/${id}_aligned.fastq.1.gz $dir/4_alignment_pinus/1_pinus_aligned_fastq/${id}_aligned_R1.fastq.gz
 mv $dir/4_alignment_pinus/1_pinus_aligned_fastq/${id}_aligned.fastq.2.gz $dir/4_alignment_pinus/1_pinus_aligned_fastq/${id}_aligned_R2.fastq.gz
+mv $dir/4_alignment_pinus/1_pinus_unaligned_fastq/${id}_unaligned.fastq.1.gz $dir/4_alignment_pinus/1_pinus_unaligned_fastq/${id}_unaligned_R1.fastq.gz
+mv $dir/4_alignment_pinus/1_pinus_unaligned_fastq/${id}_unaligned.fastq.2.gz $dir/4_alignment_pinus/1_pinus_unaligned_fastq/${id}_unaligned_R2.fastq.gz
 fi
 done
 
