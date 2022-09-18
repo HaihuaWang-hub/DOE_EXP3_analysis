@@ -20,9 +20,9 @@ bowtie2-build --threads 4 TrPtA_269336_P_taeda_mRNAdatabase_328662.fasta Pintaed
 #3.mapping
 ##################################################################
 Suicot_genome="$dir/reference/Suicot_genome"
-Pintaeda_genome="$dir/reference/Pintaeda_genome"
+Pintaeda_genome="/home/microbiome/data_storage/SATA2/plant_genome/pita/index/pita"
 gtf_suicot="$dir/reference/Suicot1_GeneCatalog_20171209.gtf"
-gtf_pintaeda="$dir/reference/TrPtA_269336_P_taeda_mRNAdatabase_328662.gtf"
+gtf_pintaeda="/home/microbiome/data_storage/SATA2/plant_genome/pita/Pita.2_01.gtf"
 
 
 
@@ -38,10 +38,10 @@ mkdir $dir/3_suillus_alignment/3_suillus_count_file
 mkdir $dir/3_suillus_alignment/2_suillus_bam_file
 mkdir $dir/3_suillus_alignment/1_suillus_unaligned_fastq
 
-bowtie2-build --threads 4  $dir/reference/Suicot1_AssemblyScaffolds_Repeatmasked.fasta $dir/reference/Suicot_genome
-gffread $dir/reference/Suicot1_GeneCatalog_20171209.gff3 -T -o $dir/reference/Suicot1_GeneCatalog_20171209.gtf
-Suicot_genome="$dir/reference/Suicot_genome"
-gtf_suicot="$dir/reference/Suicot1_GeneCatalog_20171209.gtf"
+#bowtie2-build --threads 4  $dir/reference/Suicot1_AssemblyScaffolds_Repeatmasked.fasta $dir/reference/Suicot_genome
+#gffread $dir/reference/Suicot1_GeneCatalog_20171209.gff3 -T -o $dir/reference/Suicot1_GeneCatalog_20171209.gtf
+#Suicot_genome="$dir/reference/Suicot_genome"
+#gtf_suicot="$dir/reference/Suicot1_GeneCatalog_20171209.gtf"
 
 
 dir=/Volumes/T7/plant_emf_sap_interaction
@@ -258,10 +258,10 @@ time bowtie2 -p 4 -x $Pintaeda_genome \
    --met-file $dir/4_alignment_pinus/1_bowtie2_met_file/${id}_met.txt \
    2>$dir/4_alignment_pinus/1_bowtie2_log_file/${id}_bowtie2.log
 
-samtools sort -o bam -@ 3 -o $dir/4_alignment_pinus/2_bam_file/${id}_pinus.bam $dir/4_alignment_pinus/${id}.temp/${id}_pinus.sam
-samtools flagstat -@ 3 $dir/4_alignment_pinus/${id}.temp/${id}_pinus.sam > $dir/4_alignment_pinus/2_bam_flagstat_file/${id}.flagstat
+samtools sort -o bam -@ 24 -o $dir/4_alignment_pinus/2_bam_file/${id}_pinus.bam $dir/4_alignment_pinus/${id}.temp/${id}_pinus.sam
+samtools flagstat -@ 24 $dir/4_alignment_pinus/${id}.temp/${id}_pinus.sam > $dir/4_alignment_pinus/2_bam_flagstat_file/${id}.flagstat
 
-featureCounts -t exon -F GTF -g gene_id -T 4 -a $gtf_pintaeda \
+featureCounts -t exon -F GTF -g gene_id -T 24 -a $gtf_pintaeda \
    -o $dir/4_alignment_pinus/3_pinus_count_featurecount/${id}_pinus_gene_id_count.txt \
    $dir/4_alignment_pinus/2_bam_file/${id}_pinus.bam  \
    1>$dir/4_alignment_pinus/3_pinus_count_featurecount/${id}_pinus.log 2>&1
