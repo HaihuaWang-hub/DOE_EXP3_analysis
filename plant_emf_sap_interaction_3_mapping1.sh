@@ -238,9 +238,12 @@ mkdir $dir/4_alignment_pinus/3_pinus_count_featurecount
 
 bowtie2-build --threads 4 $dir/reference/TrPtA_269336_P_taeda_mRNAdatabase_328662.fasta $dir/reference/Pintaeda_genome
 
-#Pintaeda_genome="$dir/reference/Pintaeda_genome"
+Suicot_genome="$dir/reference/Suicot_genome"
+Pintaeda_genome="/home/microbiome/data_storage/SATA2/plant_genome/pita/index/pita"
+gtf_suicot="$dir/reference/Suicot1_GeneCatalog_20171209.gtf"
+gtf_pintaeda="/home/microbiome/data_storage/SATA2/plant_genome/pita/Pita.2_01.gtf"
 #gtf_pintaeda="$dir/reference/TrPtA_269336_P_taeda_mRNAdatabase_328662.gtf"
-#Pintaeda_transcript="$dir/reference/TrPtA_269336_P_taeda_mRNAdatabase_328662.fasta"
+Pintaeda_transcript="/home/microbiome/data_storage/SATA2/plant_genome/pita/Pita.2_01.fa"
 
 dir=/Volumes/T7/plant_emf_sap_interaction
 cd $dir/1_cleandata
@@ -265,15 +268,15 @@ time bowtie2 -p 24 -x $Pintaeda_genome \
 samtools sort -o bam -@ 24 -o $dir/4_alignment_pinus/2_bam_file/${id}_pinus.bam $dir/4_alignment_pinus/${id}.temp/${id}_pinus.sam
 samtools flagstat -@ 24 $dir/4_alignment_pinus/${id}.temp/${id}_pinus.sam > $dir/4_alignment_pinus/2_bam_flagstat_file/${id}.flagstat
 
-featureCounts -t exon -F GTF -g gene_id -T 24 -a $gtf_pintaeda \
+featureCounts -t gene -F GTF -g gene_id -T 24 -a $gtf_pintaeda \
    -o $dir/4_alignment_pinus/3_pinus_count_featurecount/${id}_pinus_gene_id_count.txt \
    $dir/4_alignment_pinus/2_bam_file/${id}_pinus.bam  \
    1>$dir/4_alignment_pinus/3_pinus_count_featurecount/${id}_pinus.log 2>&1
 
-samtools sort -n -@ 24 -o $dir/4_alignment_pinus/${id}.temp/${id}_pinus.sort.bam $dir/4_alignment_pinus/2_bam_file/${id}_pinus.bam
-express -o $dir/4_alignment_pinus/3_pinus_count_express $Pintaeda_transcript $dir/4_alignment_pinus/${id}.temp/${id}_pinus.sort.bam
-mv $dir/4_alignment_pinus/3_pinus_count_express/results.xprs $dir/4_alignment_pinus/3_pinus_count_express/${id}.bam.tab
-mv $dir/4_alignment_pinus/3_pinus_count_express/params.xprs  $dir/4_alignment_pinus/3_pinus_count_express/${id}.bam.params.xprs
+# samtools sort -n -@ 24 -o $dir/4_alignment_pinus/${id}.temp/${id}_pinus.sort.bam $dir/4_alignment_pinus/2_bam_file/${id}_pinus.bam
+# express -o $dir/4_alignment_pinus/3_pinus_count_express $Pintaeda_transcript $dir/4_alignment_pinus/${id}.temp/${id}_pinus.sort.bam
+# mv $dir/4_alignment_pinus/3_pinus_count_express/results.xprs $dir/4_alignment_pinus/3_pinus_count_express/${id}.bam.tab
+# mv $dir/4_alignment_pinus/3_pinus_count_express/params.xprs  $dir/4_alignment_pinus/3_pinus_count_express/${id}.bam.params.xprs
 
 rm -rf $dir/4_alignment_pinus/${id}.temp
 mv $dir/4_alignment_pinus/1_pinus_aligned_fastq/${id}_aligned.fastq.1.gz $dir/4_alignment_pinus/1_pinus_aligned_fastq/${id}_aligned_R1.fastq.gz
