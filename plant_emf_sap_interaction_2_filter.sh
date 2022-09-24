@@ -134,9 +134,40 @@ done
 
 
 
+#extract the rRNA sequences https://github.com/biocore/sortmerna
+############################################################################################
+mkdir 1_pinus_unaligned_fastq_nonrRNA
+extract_rRNA (){
+  name=$1
+  base=$(basename $name _R1.fastq.gz)
+  if [ ! -f 1_pinus_unaligned_fastq_nonrRNA/$base.rRNA_fwd.fq.gz ]; then
+      mkdir 1_pinus_unaligned_fastq_nonrRNA/$base
+      echo "start to process ${base}" 
+     sortmerna \
+       --workdir 1_pinus_unaligned_fastq_nonrRNA/$base \
+       --ref /home/microbiome/tools/sortmerna/data/rRNA_databases/rfam-5.8s-database-id98.fasta \
+       --ref /home/microbiome/tools/sortmerna/data/rRNA_databases/rfam-5s-database-id98.fasta \
+       --ref /home/microbiome/tools/sortmerna/data/rRNA_databases/silva-arc-16s-id95.fasta \
+       --ref /home/microbiome/tools/sortmerna/data/rRNA_databases/silva-arc-23s-id98.fasta \
+       --ref /home/microbiome/tools/sortmerna/data/rRNA_databases/silva-bac-16s-id90.fasta \
+       --ref /home/microbiome/tools/sortmerna/data/rRNA_databases/silva-bac-23s-id98.fasta \
+       --ref /home/microbiome/tools/sortmerna/data/rRNA_databases/silva-euk-18s-id95.fasta \
+       --ref /home/microbiome/tools/sortmerna/data/rRNA_databases/silva-euk-28s-id98.fasta \
+       --paired_out --out2  --zip-out \
+       --reads 1_pinus_unaligned_fastq/${base}_R1.fastq.gz \
+       --reads 1_pinus_unaligned_fastq/${base}_R2.fastq.gz \
+       --fastx  --other 1_pinus_unaligned_fastq_nonrRNA/$base.nonrRNA \
+       --threads 24
+     echo "processing of ${base} is done"
+   else
+     echo "${base} has been anlyzed"
+   fi
+}
 
+export -f extract_rRNA
 
 
+nohup time parallel -j 2 --eta --load 100% --noswap  extract_rRNA ::: $(cat 1_pinus_unaligned_fastq/file_list) &
 
 
 
@@ -203,71 +234,6 @@ done
 
 
 
-#  section 2: remove rRNA with SortMeRNA (2.1b for MAC)
-####################################################
-
-#1. download database 
-#https://bioinfo.lifl.fr/RNA/sortmerna/code/sortmerna-2.1-linux-64-multithread.tar.gz
-
-#2. build the database reference
-dir=/Volumes/T7/plant_emf_sap_interaction
-cd $dir
-mkdir $dir/rRNA_free_data
-mkdir $dir/tem_workdir
-mkdir $dir/rRNA_file
-
-indexdb_rna --ref \
-$dir/rRNA_database_sortmerna/silva-bac-16s-id90.fasta,$dir/rRNA_database_sortmerna/silva-bac-16s-db:\
-$dir/rRNA_database_sortmerna/silva-bac-23s-id98.fasta,$dir/rRNA_database_sortmerna/silva-bac-23s-db:\
-$dir/rRNA_database_sortmerna/silva-arc-16s-id95.fasta,$dir/rRNA_database_sortmerna/silva-arc-16s-db:\
-$dir/rRNA_database_sortmerna/silva-arc-23s-id98.fasta,$dir/rRNA_database_sortmerna/silva-arc-23s-db:\
-$dir/rRNA_database_sortmerna/silva-euk-18s-id95.fasta,$dir/rRNA_database_sortmerna/silva-euk-18s-db:\
-$dir/rRNA_database_sortmerna/silva-euk-28s-id98.fasta,$dir/rRNA_database_sortmerna/silva-euk-28s:\
-$dir/rRNA_database_sortmerna/rfam-5s-database-id98.fasta,$dir/rRNA_database_sortmerna/rfam-5s-db:\
-$dir/rRNA_database_sortmerna/rfam-5.8s-database-id98.fasta,$dir/rRNA_database_sortmerna/rfam-5.8s-db
-
-
-
-dir=/Volumes/T7/plant_emf_sap_interaction
-cd $dir/pinus_gene_removed_seq
-mkdir ../rRNA_pinus_remove
-mkdir ../remained_rRNA
-
-ls *.gz|cut -d"_" -f 1,2,3,4,5,6,7,8 |while read id ;do
-mv ${id}_unaligned.fastq.1.gz ${id}_pinus_remove_R1.fastq.gz
-mv ${id}_unaligned.fastq.2.gz ${id}_pinus_remove_R2.fastq.gz
-
-
-ls *.gz|cut -d"_" -f 1,2,3,4,5,6,7,8,9,10 |sort -u |while read id;do
-mkdir ${id}_workdir
-cp ${id}_R1.fastq.gz ${id}_workdir
-cp ${id}_R2.fastq.gz ${id}_workdir
-gunzip ${id}_workdir/${id}_R1.fastq.gz ${id}_workdir/${id}_R2.fastq.gz
-merge-paired-reads.sh ${id}_workdir/${id}_R1.fastq ${id}_workdir/${id}_R2.fastq ${id}_workdir/${id}.fastq
-time sortmerna --ref \
-$dir/rRNA_database_sortmerna/silva-bac-16s-id90.fasta,$dir/rRNA_database_sortmerna/silva-bac-16s-db:\
-$dir/rRNA_database_sortmerna/silva-bac-23s-id98.fasta,$dir/rRNA_database_sortmerna/silva-bac-23s-db:\
-$dir/rRNA_database_sortmerna/silva-arc-16s-id95.fasta,$dir/rRNA_database_sortmerna/silva-arc-16s-db:\
-$dir/rRNA_database_sortmerna/silva-arc-23s-id98.fasta,$dir/rRNA_database_sortmerna/silva-arc-23s-db:\
-$dir/rRNA_database_sortmerna/silva-euk-18s-id95.fasta,$dir/rRNA_database_sortmerna/silva-euk-18s-db:\
-$dir/rRNA_database_sortmerna/silva-euk-28s-id98.fasta,$dir/rRNA_database_sortmerna/silva-euk-28s:\
-$dir/rRNA_database_sortmerna/rfam-5s-database-id98.fasta,$dir/rRNA_database_sortmerna/rfam-5s-db:\
-$dir/rRNA_database_sortmerna/rfam-5.8s-database-id98.fasta,$dir/rRNA_database_sortmerna/rfam-5.8s-db \
- --reads ${id}_workdir/${id}.fastq \
-  --paired_out \
-  --aligned $dir/remained_rRNA/${id}.all_rRNA \
-  --other $dir/rRNA_pinus_remove/${id}.non.rRNA \
-  --fastx --log -v --num_alignments 1 -a 4
-rm -rf ${id}_workdir
-unmerge-paired-reads.sh $dir/remained_rRNA/${id}.all_rRNA.fastq $dir/remained_rRNA/${id}.all_rRNA_R1.fastq $dir/remained_rRNA/${id}.all_rRNA_R2.fastq
-unmerge-paired-reads.sh $dir/rRNA_pinus_remove/${id}.non.rRNA.fastq $dir/rRNA_pinus_remove/${id}.non.rRNA_R1.fastq $dir/rRNA_pinus_remove/${id}.non.rRNA_R2.fastq
-rm $dir/remained_rRNA/${id}.all_rRNA.fastq
-gzip $dir/remained_rRNA/${id}.all_rRNA_R1.fastq 
-gzip $dir/remained_rRNA/${id}.all_rRNA_R2.fastq 
-rm $dir/rRNA_pinus_remove/${id}.non.rRNA.fastq
-gzip $dir/rRNA_pinus_remove/${id}.non.rRNA_R1.fastq 
-gzip $dir/rRNA_pinus_remove/${id}.non.rRNA_R2.fastq
-done
 
 
 
