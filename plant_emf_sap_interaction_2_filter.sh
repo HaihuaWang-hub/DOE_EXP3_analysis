@@ -158,6 +158,7 @@ extract_rRNA (){
        --reads 1_pinus_unaligned_fastq/${base}_R2.fastq.gz \
        --fastx  --other 1_pinus_unaligned_fastq_nonrRNA/$base.nonrRNA \
        --threads 24
+     rm -rf   1_pinus_unaligned_fastq_nonrRNA/$base
      echo "processing of ${base} is done"
    else
      echo "${base} has been anlyzed"
