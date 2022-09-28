@@ -140,7 +140,7 @@ mkdir 1_pinus_unaligned_fastq_nonrRNA
 extract_rRNA (){
   name=$1
   base=$(basename $name _R1.fastq.gz)
-  if [ ! -f 1_pinus_unaligned_fastq_nonrRNA/$base.rRNA_fwd.fq.gz ]; then
+  if [ ! -f 1_pinus_unaligned_fastq_nonrRNA/$base.nonrRNA_fwd.fq ]; then
       mkdir 1_pinus_unaligned_fastq_nonrRNA/$base
       echo "start to process ${base}" 
      sortmerna \
