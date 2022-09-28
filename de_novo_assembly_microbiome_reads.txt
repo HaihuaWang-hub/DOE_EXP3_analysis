@@ -44,3 +44,15 @@ seqtk sample -s100 AA257R2_S66_L003_unaligned.nonrRNA_rev.fq 100000 > sub3_rev.f
 
 
 
+################################################
+#de novo assembly
+###############################################
+Trinity --CPU 24 \
+    --seqType fq \
+    --left  dup_removedmerged_paried_R1.fastq   \
+    --right dup_removedmerged_paried_R1.fastq  \
+    --max_memory 15G \
+    --output Trinity_output_subsample
+    
+    
+
