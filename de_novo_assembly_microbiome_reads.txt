@@ -27,3 +27,20 @@ rmdup() {
 export -f rmdup
    
 time parallel -j 24 --eta --load 99% --noswap  rmdup ::: $(ls *.nonrRNA_fwd.fq)
+
+
+#############################################
+#subsample the sequencing reads
+#############################################
+
+seqtk sample -s100 AA121R_S27_L003_unaligned.nonrRNA_fwd.fq 100000 > sub1_fwd.fq
+seqtk sample -s100 AA121R_S27_L003_unaligned.nonrRNA_rev.fq 100000 > sub1_rev.fq
+
+seqtk sample -s100 AA152R_S38_L003_unaligned.nonrRNA_fwd.fq 100000 > sub2_fwd.fq
+seqtk sample -s100 AA152R_S38_L003_unaligned.nonrRNA_rev.fq 100000 > sub2_rev.fq
+
+seqtk sample -s100 AA257R2_S66_L003_unaligned.nonrRNA_fwd.fq 100000 > sub3_fwd.fq
+seqtk sample -s100 AA257R2_S66_L003_unaligned.nonrRNA_rev.fq 100000 > sub3_rev.fq
+
+
+
