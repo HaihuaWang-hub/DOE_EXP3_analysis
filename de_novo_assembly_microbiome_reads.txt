@@ -1,0 +1,27 @@
+#########################33
+#combine the reads and remove the duplicates
+##########################
+for i in *.gz ;do
+   pigz -d $i
+done
+
+cat *_fwd.fq > combine_fwd.fq
+cat *_rev.fq > combine_rev.fq
+
+for i in *.fq ;do
+   pigz  $i
+done
+
+
+#https://blog.sina.com.cn/s/blog_670445240101lqat.html
+#fastuniq -i file_list -t q -o fungi_rRNA_R1.fastq -p fungi_rRNA_R2.fastq -c 0
+rmdup() {
+    i=$1
+    base=$(basename $i .nonrRNA_fwd.fq)
+    ls $base* > $base
+    fastuniq -i $base -t q -o $base.rmdup_R1.fastq -p $base.rmdup_R2.fastq -c 0
+}
+
+export -f rmdup
+   
+time parallel -j 24 --eta --load 99% --noswap  rmdup ::: $(ls *.nonrRNA_fwd.fq)
