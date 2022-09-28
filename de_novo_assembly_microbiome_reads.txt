@@ -18,8 +18,10 @@ done
 rmdup() {
     i=$1
     base=$(basename $i .nonrRNA_fwd.fq)
-    ls $base* > $base
-    fastuniq -i $base -t q -o $base.rmdup_R1.fastq -p $base.rmdup_R2.fastq -c 0
+    if [ ! -f "$base.rmdup_R1.fastq" ]; then
+      ls $base.nonrRNA_* > $base
+      fastuniq -i $base -t q -o $base.rmdup_R1.fastq -p $base.rmdup_R2.fastq -c 0
+    fi
 }
 
 export -f rmdup
