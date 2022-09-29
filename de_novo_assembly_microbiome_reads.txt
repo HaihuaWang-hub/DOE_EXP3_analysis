@@ -50,31 +50,31 @@ https://github.com/trinityrnaseq/trinityrnaseq/wiki/Running-Trinity
 https://hcc.unl.edu/docs/applications/app_specific/bioinformatics_tools/de_novo_assembly_tools/trinity/running_trinity_in_multiple_steps/
 ###############################################
 #trinity_step1
-Trinity --seqType fq --max_memory 120G 
-  --samples_file file_list 
-  --SS_lib_type FR 
-  --output trinity_out/ 
+Trinity --seqType fq --max_memory 120G \
+  --samples_file file_list \
+  --SS_lib_type FR \
+  --output trinity_out/ \
   --CPU 24 --no_run_inchworm
 
 #trinity_step2
-Trinity --seqType fq --max_memory 120G 
-  --samples_file file_list 
-  --SS_lib_type FR 
-  --output trinity_out/ 
+Trinity --seqType fq --max_memory 120G \
+  --samples_file file_list \
+  --SS_lib_type FR \
+  --output trinity_out/ \
   --CPU 24 --no_run_chrysalis
 
 #trinity_step3
-Trinity --seqType fq --max_memory 120G 
-  --samples_file file_list 
-  --SS_lib_type FR 
-  --output trinity_out/ 
+Trinity --seqType fq --max_memory 120G \
+  --samples_file file_list \
+  --SS_lib_type FR \
+  --output trinity_out/ \
   --CPU 24 --no_distributed_trinity_exec
 
 #trinity_step4
-Trinity --seqType fq --max_memory 120G 
-  --samples_file file_list 
-  --SS_lib_type FR 
-  --output trinity_out/ 
+Trinity --seqType fq --max_memory 120G \
+  --samples_file file_list \
+  --SS_lib_type FR \
+  --output trinity_out/ \
   --CPU 24
   
   
