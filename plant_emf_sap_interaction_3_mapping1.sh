@@ -287,7 +287,10 @@ fi
 done
 
 
-
+featureCounts -t gene -F GTF -g gene_id -T 24 -a $gtf_pintaeda \
+   -o $dir/4_alignment_pinus/3_pinus_count_featurecount/pinus_gene_id_count.txt \
+   $dir/4_alignment_pinus/2_bam_file/*_pinus.bam  \
+   1>$dir/4_alignment_pinus/3_pinus_count_featurecount/pinus_gene_id_count.log 2>&1
 
 
 
