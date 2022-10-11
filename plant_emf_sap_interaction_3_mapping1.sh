@@ -293,7 +293,7 @@ featureCounts -t gene -F GTF -g gene_id -T 24 -a $gtf_pintaeda \
    1>$dir/4_alignment_pinus/3_pinus_count_featurecount/pinus_gene_id_count.log 2>&1
 
 
-featureCounts -t exon -F GTF -g gene_id -p -M -T 24 -a $gtf_pintaeda \
+featureCounts -t gene -F GTF -g gene_id -p -M -T 24 -a $gtf_pintaeda \
     -o $dir/4_alignment_pinus/3_pinus_count_featurecount/pinus_gene_id_count_overlap.txt \
    $dir/4_alignment_pinus/2_bam_file/*_pinus.bam  \
    1>$dir/4_alignment_pinus/3_pinus_count_featurecount/pinus_gene_id_count_overlap.log 2>&1
