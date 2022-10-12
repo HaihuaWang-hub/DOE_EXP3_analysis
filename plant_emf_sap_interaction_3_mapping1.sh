@@ -19,9 +19,9 @@ bowtie2-build --threads 4 TrPtA_269336_P_taeda_mRNAdatabase_328662.fasta Pintaed
 
 #3.mapping
 ##################################################################
-Suicot_genome="$dir/reference/Suicot_genome"
+Suicot_genome="/data_storage/SATA2/haihua/RNA_data/genome_reference/Suicot_genome"
 Pintaeda_genome="/home/microbiome/data_storage/SATA2/plant_genome/pita/index/pita"
-gtf_suicot="$dir/reference/Suicot1_GeneCatalog_20171209.gtf"
+gtf_suicot="/data_storage/SATA2/haihua/RNA_data/genome_reference/Suicot1_GeneCatalog_20171209.gtf"
 gtf_pintaeda="/home/microbiome/data_storage/SATA2/plant_genome/pita/Pita.2_01.gtf"
 
 
@@ -46,27 +46,30 @@ mkdir $dir/3_suillus_alignment/1_suillus_unaligned_fastq
 
 dir=/Volumes/T7/plant_emf_sap_interaction
 cd $dir/cleandata
-ls *.gz|cut -d"_" -f 1,2,3 |sort -u |while read id;do
-if [ -f "$dir/3_suillus_alignment/3_suillus_count_file/${id}_suillus_gene_id_count.txt" ]; then
-    echo "${id} has been analyzed"
-    else
-mkdir $dir/3_suillus_alignment/${id}.temp
-time bowtie2 -p 4 -x $Suicot_genome \
--1 ${id}_paired_R1.fq.gz \
--2 ${id}_paired_R2.fq.gz \
--S $dir/3_suillus_alignment/${id}.temp/${id}_suillus.sam \
---al-conc-gz $dir/3_suillus_alignment/1_suillus_aligned_fastq/${id}_aligned.fastq.gz \
---un-conc-gz $dir/3_suillus_alignment/1_suillus_unaligned_fastq/${id}_unaligned.fastq.gz \
---met-file $dir/3_suillus_alignment/1_bowtie2_met_file/${id}_met.txt \
-2>$dir/3_suillus_alignment/1_bowtie2_log_file/${id}_bowtie2.log
+ls *.gz|cut -d"_" -f 1 |sort -u  |while read id;do
+  echo $id
+  fwd="${id}_val_1.fq.gz"
+  rev="${id}_val_2.fq.gz"
+  if [ -f "$dir/3_suillus_alignment/1_pinus_unaligned_fastq/${id}_unaligned_R2.fastq.gz" ]; then
+      echo "${id} has been analyzed"
+      else
+      mkdir $dir/3_suillus_alignment/${id}.temp
+      time bowtie2 -p 24 -x $Suicot_genome \
+           -1 $fwd \
+           -2 $rev \
+           -S $dir/3_suillus_alignment/${id}.temp/${id}_suillus.sam \
+           --al-conc-gz $dir/3_suillus_alignment/1_suillus_aligned_fastq/${id}_aligned.fastq.gz \
+           --un-conc-gz $dir/3_suillus_alignment/1_suillus_unaligned_fastq/${id}_unaligned.fastq.gz \
+           --met-file $dir/3_suillus_alignment/1_bowtie2_met_file/${id}_met.txt \
+           2>$dir/3_suillus_alignment/1_bowtie2_log_file/${id}_bowtie2.log
 
-samtools sort -o bam -@ 3 -o $dir/3_suillus_alignment/2_suillus_bam_file/${id}_suillus.bam $dir/3_suillus_alignment/${id}.temp/${id}_suillus.sam
-samtools flagstat -@ 3 $dir/3_suillus_alignment/${id}.temp/${id}_suillus.sam > $dir/3_suillus_alignment/2_bam_flagstat_file/${id}.flagstat
-featureCounts -t exon -F GTF -g gene_id -T 4 -a $gtf_suicot -o $dir/3_suillus_alignment/3_suillus_count_file/${id}_suillus_gene_id_count.txt $dir/3_suillus_alignment/2_suillus_bam_file/${id}_suillus.bam  1>$dir/suillus_alignment/3_suillus_count_file/${id}_suillus.log 2>&1
-rm -rf $dir/3_suillus_alignment/${id}.temp
-mv $dir/3_suillus_alignment/1_suillus_aligned_fastq/${id}_aligned.fastq.1.gz $dir/3_suillus_alignment/1_suillus_aligned_fastq/${id}_aligned_R1.fastq.gz
-mv $dir/3_suillus_alignment/1_suillus_aligned_fastq/${id}_aligned.fastq.2.gz $dir/3_suillus_alignment/1_suillus_aligned_fastq/${id}_aligned_R2.fastq.gz
-fi
+      samtools sort -o bam -@ 3 -o $dir/3_suillus_alignment/2_suillus_bam_file/${id}_suillus.bam $dir/3_suillus_alignment/${id}.temp/${id}_suillus.sam
+      samtools flagstat -@ 3 $dir/3_suillus_alignment/${id}.temp/${id}_suillus.sam > $dir/3_suillus_alignment/2_bam_flagstat_file/${id}.flagstat
+      featureCounts -t exon -F GTF -g gene_id -T 4 -a $gtf_suicot -o $dir/3_suillus_alignment/3_suillus_count_file/${id}_suillus_gene_id_count.txt $dir/3_suillus_alignment/2_suillus_bam_file/${id}_suillus.bam  1>$dir/suillus_alignment/3_suillus_count_file/${id}_suillus.log 2>&1
+      rm -rf $dir/3_suillus_alignment/${id}.temp
+      mv $dir/3_suillus_alignment/1_suillus_aligned_fastq/${id}_aligned.fastq.1.gz $dir/3_suillus_alignment/1_suillus_aligned_fastq/${id}_aligned_R1.fastq.gz
+      mv $dir/3_suillus_alignment/1_suillus_aligned_fastq/${id}_aligned.fastq.2.gz $dir/3_suillus_alignment/1_suillus_aligned_fastq/${id}_aligned_R2.fastq.gz
+   fi
 done
 
 
