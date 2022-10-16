@@ -120,6 +120,7 @@ ls *.gz|cut -d"." -f 1 |sort -u  |while read id;do
       else
       mkdir $dir/${id}.temp
       time bowtie2 -p 24 -x $Trinity_genome \
+           --end-to-end --very-sensitive \
            -1 $fwd \
            -2 $rev \
            -S $dir/${id}.temp/${id}_suillus.sam \
