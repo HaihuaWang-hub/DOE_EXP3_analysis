@@ -98,4 +98,38 @@ Trinity --CPU 6 \
     --samples_file file_list  \
     --max_memory 15G \
     --output ../trinity_output
+    
+    
+    
+    
+    
+######################################################################
+dir=/home/microbiome/data_storage/SATA2/RNA_data/DOE_EXP3/4_alignment_pinus/1_pinus_unaligned_fastq_nonrRNA
+Trinity_genome="/home/microbiome/data_storage/SATA2/RNA_data/DOE_EXP3/4_alignment_pinus/1_pinus_unaligned_fastq_nonrRNA/trinity_out_10_file/Trinity"
+mkdir $dir/Trinity_unaligned_fastq
+mkdir $dir/Trinity_unaligned_fastq/1_bowtie2_met_file
+mkdir $dir/Trinity_unaligned_fastq/1_bowtie2_log_file
+
+
+ls *.gz|cut -d"." -f 1 |sort -u  |while read id;do
+  echo $id
+  fwd="${id}.nonrRNA_fwd.fq.gz"
+  rev="${id}.nonrRNA_rev.fq.gz"
+  if [ -f "$dir/Trinity_unaligned_fastq/${id}_aligned_R2.fastq.gz" ]; then
+      echo "${id} has been analyzed"
+      else
+      mkdir $dir/${id}.temp
+      time bowtie2 -p 24 -x $Trinity_genome \
+           -1 $fwd \
+           -2 $rev \
+           -S $dir/${id}.temp/${id}_suillus.sam \
+           --un-conc-gz $dir/Trinity_unaligned_fastq/${id}_Trinity_unaligned.fastq.gz \
+           --met-file $dir/Trinity_unaligned_fastq/1_bowtie2_met_file/${id}_met.txt \
+           2>$dir/Trinity_unaligned_fastq/1_bowtie2_log_file/${id}_bowtie2.log
+
+      rm -rf $dir/3_suillus_alignment/${id}.temp
+      mv $dir/Trinity_unaligned_fastq/${id}_Trinity_aligned.fastq.1.gz  $dir/Trinity_unaligned_fastq/${id}_Trinity_aligned_R1.fastq.gz
+      mv $dir/Trinity_unaligned_fastq/${id}_Trinity_aligned.fastq.2.gz  $dir/Trinity_unaligned_fastq/${id}_Trinity_aligned_R2.fastq.gz
+   fi
+done
 
