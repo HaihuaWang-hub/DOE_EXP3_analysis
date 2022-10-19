@@ -34,7 +34,7 @@ for i in rawdata/*_R1.fastq.gz; do
    basename=$(basename "$i" _R1.fastq.gz)
    echo $basename
    if [ ! -f cleandata/${basename}_R2_val_2.fq.gz ]; then
-     trim_galore -q 25 --phred33 --stringency 3 --length 110 \
+     trim_galore -q 25 --phred33 --stringency 3 --length 40 \
                --paired rawdata/${basename}_R1.fastq.gz    rawdata/${basename}_R2.fastq.gz \
                --gzip \
                --basename $basename \
