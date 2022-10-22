@@ -67,8 +67,8 @@ ls *.gz|cut -d"_" -f 1 |sort -u  |while read id;do
       samtools flagstat -@ 3 $dir/3_suillus_alignment/${id}.temp/${id}_suillus.sam > $dir/3_suillus_alignment/2_bam_flagstat_file/${id}.flagstat
       featureCounts -t exon -F GTF -g gene_id -T 4 -a $gtf_suicot -o $dir/3_suillus_alignment/3_suillus_count_file/${id}_suillus_gene_id_count.txt $dir/3_suillus_alignment/2_suillus_bam_file/${id}_suillus.bam  1>$dir/3_suillus_alignment/3_suillus_count_file/${id}_suillus.log 2>&1
       rm -rf $dir/3_suillus_alignment/${id}.temp
-      mv $dir/3_suillus_alignment/1_suillus_aligned_fastq/${id}_aligned.fastq.1.gz $dir/3_suillus_alignment/1_suillus_aligned_fastq/${id}_aligned_R1.fastq.gz
-      mv $dir/3_suillus_alignment/1_suillus_aligned_fastq/${id}_aligned.fastq.2.gz $dir/3_suillus_alignment/1_suillus_aligned_fastq/${id}_aligned_R2.fastq.gz
+      mv -f $dir/3_suillus_alignment/1_suillus_aligned_fastq/${id}_aligned.fastq.1.gz $dir/3_suillus_alignment/1_suillus_aligned_fastq/${id}_aligned_R1.fastq.gz
+      mv -f $dir/3_suillus_alignment/1_suillus_aligned_fastq/${id}_aligned.fastq.2.gz $dir/3_suillus_alignment/1_suillus_aligned_fastq/${id}_aligned_R2.fastq.gz
    fi
 done
 
