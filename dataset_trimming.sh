@@ -48,6 +48,37 @@ trim_galore -q 25 --phred33 --stringency 3 --length 100 \
 
 done 
 
+
+
+
+ls *.gz|cut -d"_" -f 1 |sort -u |while read id;do
+  echo $id
+  pigz -d ${id}_val_1.fq.gz 
+  pigz -d ${id}_val_2.fq.gz
+  cd-hit-dup  \
+    -i  ${id}_val_1.fq \
+    -i2 ${id}_val_2.fq \
+    -o cleandata_rmdup/${id}_rmdup_val_1.fq \
+    -o2 cleandata_rmdup/${id}_rmdup_val_2.fq \
+    -e 0
+  pigz ${id}_val_1.fq
+  pigz ${id}_val_2.fq
+  pigz cleandata_rmdup/${id}_rmdup_val_1.fq
+  pigz cleandata_rmdup/${id}_rmdup_val_2.fq
+done
+
+
+trim_galore -q 25 --phred33 --stringency 3 --length 100 \
+--paired ${id}_R1_001.fastq.gz    ${id}_R2_001.fastq.gz \
+--gzip \
+--cores 10 \
+-o ../cleandata_trimglore  
+
+
+
+
+
+
 2>$dir/3_suillus_alignment/1_bowtie2_log_file/${id}_bowtie2.log
 
 
