@@ -3,7 +3,7 @@
 ####################################################
 #!/bin/bash
 conda activate RNASeq
-dir=/Volumes/T7/plant_emf_sap_interaction
+dir=
 
 
 #  section 1: reference preparation
@@ -28,7 +28,7 @@ gtf_pintaeda="/home/microbiome/data_storage/SATA2/plant_genome/pita/Pita.2_01.gt
 
 #  section2: mapping to suillus
 ################################################################
-dir=/Volumes/T7/plant_emf_sap_interaction
+dir=#Path to file
 mkdir $dir/3_suillus_alignment
 mkdir $dir/3_suillus_alignment/1_suillus_aligned_fastq
 mkdir $dir/3_suillus_alignment/1_bowtie2_met_file
@@ -44,12 +44,12 @@ mkdir $dir/3_suillus_alignment/1_suillus_unaligned_fastq
 #gtf_suicot="$dir/reference/Suicot1_GeneCatalog_20171209.gtf"
 
 
-dir=/Volumes/T7/plant_emf_sap_interaction
+
 cd $dir/cleandata
 ls *.gz|cut -d"_" -f 1 |sort -u  |while read id;do
   echo $id
-  fwd="${id}_val_1.fq.gz"
-  rev="${id}_val_2.fq.gz"
+  fwd="cleandata_rmdup/${id}_rmdup_val_1.fq.gz"
+  rev="cleandata_rmdup/${id}_rmdup_val_2.fq.gz"
   if [ -f "$dir/3_suillus_alignment/3_suillus_count_file/${id}_suillus_gene_id_count.txt" ]; then
       echo "${id} has been analyzed"
       else
@@ -83,20 +83,6 @@ featureCounts -t exon -F GTF -g gene_id -p -O -M -T 24 -a $gtf_suicot -o $dir/3_
 
 
 
-
-time bowtie2 -p 5 -x $Suicot_genome \
--1 10424.5.160042.GGCTAC.anqrpht_R1.fastq.gz \
--2 10424.5.160042.GGCTAC.anqrpht_R2.fastq.gz \
--S suillus_conthurnatus_culture_RNA.sam \
---al-conc-gz suillus_conthurnatus_culture_RNA_aligned.fastq.gz \
---un-conc-gz suillus_conthurnatus_culture_RNA_unaligned.fastq.gz \
---met-file suillus_conthurnatus_culture_RNA_met.txt \
-2>suillus_conthurnatus_culture_RNA_bowtie2.log
-
-samtools sort -o bam -@ 3 -o suillus_conthurnatus_culture_RNA.bam suillus_conthurnatus_culture_RNA.sam
-samtools flagstat -@ 3 suillus_conthurnatus_culture_RNA.sam > suillus_conthurnatus_culture_RNA.flagstat
-
-featureCounts -t exon -F GTF -g gene_id -p -O -M -T 4 -a $gtf_suicot -o suillus_catalog_gene_id_count_overlap.txt *.bam  1>counts.catalog_gene_id_overlap.log 2>&1
 
 
 
@@ -166,57 +152,6 @@ rm /Volumes/T7/plant_emf_sap_interaction/5_rhizoppgon_mapping/${id}_Rhivul5.sam
 done
 
 
-
-
-
-
-
-#  section 4: mapping rhizopogon suillus 
-####################################################
-dir=/Volumes/T7/plant_emf_sap_interaction
-
-
-ls *.gz |while read id;do
-trim_galore -q 25 --phred33 --stringency 3 --length 25 \
-${id} \
---gzip \
---cores 3 \
--o $dir/1_suillus_culture_RNA
-done 
-
-
-bowtie2-build --threads 4 Rhivul1_AssemblyScaffolds_Repeatmasked.fasta Rhivul_genome
-bowtie2-build --threads 4 Suilu4_AssemblyScaffolds_Repeatmasked.fasta Suilut_genome
-
-Suicot_genome="$dir/reference/Suicot_genome"
-Suilut_genome="/Volumes/T7/plant_emf_sap_interaction/1_suillus_culture_RNA/suillus_luteus/Suilut_genome"
-Rhivul_genome="/Volumes/T7/plant_emf_sap_interaction/1_suillus_culture_RNA/Rhizopogon_vulgaris/Rhivul_genome"
-
-
-ls *_trimmed.fq.gz |cut -d"_" -f 1,2,3 |while read id;do
-
-time bowtie2 -p 4 -x $Suilut_genome \
-   -U ${id}_trimmed.fq.gz \
-   -S ${id}_Suilut.sam \
-   2>${id}_Suilut_bowtie2.log
-rm ${id}_Suilut.sam
-
-
-time bowtie2 -p 4 -x $Rhivul_genome \
-   -U ${id}_trimmed.fq.gz \
-   -S ${id}_Rhivul.sam \
-   2>${id}_Rhivul_bowtie2.log
-rm ${id}_Rhivul.sam
-done
-
-
-
-
-bowtie2 -p 4 -x $Suicot_genome \
-   -U ${id} \
-   -S ${id}_Suicot.sam \
-   2>${id}_Suicot_bowtie2.log
-rm ${id}_Suicot.sam
 
 
 
