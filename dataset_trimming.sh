@@ -52,19 +52,24 @@ done
 
 
 ls *.gz|cut -d"_" -f 1 |sort -u |while read id;do
-  echo $id
-  pigz -d ${id}_val_1.fq.gz 
-  pigz -d ${id}_val_2.fq.gz
-  cd-hit-dup  \
-    -i  ${id}_val_1.fq \
-    -i2 ${id}_val_2.fq \
-    -o cleandata_rmdup/${id}_rmdup_val_1.fq \
-    -o2 cleandata_rmdup/${id}_rmdup_val_2.fq \
-    -e 0
-  pigz ${id}_val_1.fq
-  pigz ${id}_val_2.fq
-  pigz cleandata_rmdup/${id}_rmdup_val_1.fq
-  pigz cleandata_rmdup/${id}_rmdup_val_2.fq
+   echo $id
+   if [ -f cleandata_rmdup/${id}_rmdup_val_2.fq.gz ]; then
+      echo "${id} has been analyzed"
+   else
+      echo "Start to process ${id}"
+      pigz -d ${id}_val_1.fq.gz 
+      pigz -d ${id}_val_2.fq.gz
+      cd-hit-dup  \
+          -i  ${id}_val_1.fq \
+          -i2 ${id}_val_2.fq \
+          -o cleandata_rmdup/${id}_rmdup_val_1.fq \
+          -o2 cleandata_rmdup/${id}_rmdup_val_2.fq \
+          -e 0
+      pigz ${id}_val_1.fq
+      pigz ${id}_val_2.fq
+      pigz cleandata_rmdup/${id}_rmdup_val_1.fq
+      pigz cleandata_rmdup/${id}_rmdup_val_2.fq
+   fi      
 done
 
 
