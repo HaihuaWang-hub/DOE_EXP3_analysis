@@ -154,16 +154,33 @@ done
 
 
 
-
-
-
-
-
-
-#  section 3: mapping pinus
+#  section 3: mapping pinus #trinity
 ####################################################
 #3.1 mapping for pinus teada
-dir=/Volumes/T7/plant_emf_sap_interaction
+
+Suicot_genome="$dir/reference/Suicot_genome"
+Pintaeda_genome="/home/microbiome/data_storage/SATA2/plant_genome/pita/index/pita"
+gtf_suicot="$dir/reference/Suicot1_GeneCatalog_20171209.gtf"
+gtf_pintaeda="/home/microbiome/data_storage/SATA2/plant_genome/pita/Pita.2_01.gtf"
+#gtf_pintaeda="$dir/reference/TrPtA_269336_P_taeda_mRNAdatabase_328662.gtf"
+Pintaeda_transcript="/home/microbiome/data_storage/SATA2/plant_genome/pita/Pita.2_01.fa"
+
+/home/microbiome/miniconda3/envs/RNASeq/bin/align_and_estimate_abundance.pl \
+  --transcripts $Pintaeda_transcript \
+  --seqType fq \
+  --samples_file file_list \
+  --est_method RSEM \
+  --aln_method bowtie \
+  --trinity_mode \
+  --prep_reference \
+  --output_dir 4_pinus_rsem_estimate_outdir \
+  --thread_count 24
+
+
+#  section 3: mapping pinus #bowtie2
+####################################################
+#3.1 mapping for pinus teada
+dir=
 mkdir $dir/4_alignment_pinus
 mkdir $dir/4_alignment_pinus/1_pinus_aligned_fastq
 mkdir $dir/4_alignment_pinus/1_pinus_unaligned_fastq
