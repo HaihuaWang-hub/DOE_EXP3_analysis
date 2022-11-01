@@ -187,40 +187,40 @@ dir=/Volumes/T7/plant_emf_sap_interaction
 cd $dir/1_cleandata
 
 ls *.gz|cut -d"_" -f 1,2,3 |sort -u  |while read id;do
-echo $id
-fwd="${id}_val_1.fq.gz"
-rev="${id}_val_2.fq.gz"
-if [ -f "$dir/4_alignment_pinus/1_pinus_unaligned_fastq/${id}_unaligned_R2.fastq.gz" ]; then
+  echo $id
+  fwd="cleandata_rmdup/${id}_rmdup_val_1.fq.gz"
+  rev="cleandata_rmdup/${id}_rmdup_val_2.fq.gz"
+  if [ -f "$dir/4_alignment_pinus/1_pinus_unaligned_fastq/${id}_unaligned_R2.fastq.gz" ]; then
     echo "${id} has been analyzed"
-    else
-mkdir $dir/4_alignment_pinus/${id}.temp
-time bowtie2 -p 24 -x $Pintaeda_genome \
-   -1  $fwd \
-   -2  $rev \
-   -S $dir/4_alignment_pinus/${id}.temp/${id}_pinus.sam \
-   --al-conc-gz $dir/4_alignment_pinus/1_pinus_aligned_fastq/${id}_aligned.fastq.gz \
-   --un-conc-gz $dir/4_alignment_pinus/1_pinus_unaligned_fastq/${id}_unaligned.fastq.gz \
-   --met-file $dir/4_alignment_pinus/1_bowtie2_met_file/${id}_met.txt \
-   2>$dir/4_alignment_pinus/1_bowtie2_log_file/${id}_bowtie2.log
+  else
+    mkdir $dir/4_alignment_pinus/${id}.temp
+    time bowtie2 -p 24 -x $Pintaeda_genome \
+      -1  $fwd \
+      -2  $rev \
+      -S $dir/4_alignment_pinus/${id}.temp/${id}_pinus.sam \
+      --al-conc-gz $dir/4_alignment_pinus/1_pinus_aligned_fastq/${id}_aligned.fastq.gz \
+      --un-conc-gz $dir/4_alignment_pinus/1_pinus_unaligned_fastq/${id}_unaligned.fastq.gz \
+      --met-file $dir/4_alignment_pinus/1_bowtie2_met_file/${id}_met.txt \
+      2>$dir/4_alignment_pinus/1_bowtie2_log_file/${id}_bowtie2.log
 
-samtools sort -o bam -@ 24 -o $dir/4_alignment_pinus/2_bam_file/${id}_pinus.bam $dir/4_alignment_pinus/${id}.temp/${id}_pinus.sam
-samtools flagstat -@ 24 $dir/4_alignment_pinus/${id}.temp/${id}_pinus.sam > $dir/4_alignment_pinus/2_bam_flagstat_file/${id}.flagstat
+  samtools sort -o bam -@ 24 -o $dir/4_alignment_pinus/2_bam_file/${id}_pinus.bam $dir/4_alignment_pinus/${id}.temp/${id}_pinus.sam
+  samtools flagstat -@ 24 $dir/4_alignment_pinus/${id}.temp/${id}_pinus.sam > $dir/4_alignment_pinus/2_bam_flagstat_file/${id}.flagstat
 
-featureCounts -t gene -F GTF -g gene_id -T 24 -a $gtf_pintaeda \
-   -o $dir/4_alignment_pinus/3_pinus_count_featurecount/${id}_pinus_gene_id_count.txt \
-   $dir/4_alignment_pinus/2_bam_file/${id}_pinus.bam  \
-   1>$dir/4_alignment_pinus/3_pinus_count_featurecount/${id}_pinus.log 2>&1
+  featureCounts -t gene -F GTF -g gene_id -T 24 -a $gtf_pintaeda \
+    -o $dir/4_alignment_pinus/3_pinus_count_featurecount/${id}_pinus_gene_id_count.txt \
+    $dir/4_alignment_pinus/2_bam_file/${id}_pinus.bam  \
+    1>$dir/4_alignment_pinus/3_pinus_count_featurecount/${id}_pinus.log 2>&1
 
 # samtools sort -n -@ 24 -o $dir/4_alignment_pinus/${id}.temp/${id}_pinus.sort.bam $dir/4_alignment_pinus/2_bam_file/${id}_pinus.bam
 # express -o $dir/4_alignment_pinus/3_pinus_count_express $Pintaeda_transcript $dir/4_alignment_pinus/${id}.temp/${id}_pinus.sort.bam
 # mv $dir/4_alignment_pinus/3_pinus_count_express/results.xprs $dir/4_alignment_pinus/3_pinus_count_express/${id}.bam.tab
 # mv $dir/4_alignment_pinus/3_pinus_count_express/params.xprs  $dir/4_alignment_pinus/3_pinus_count_express/${id}.bam.params.xprs
 
-rm -rf $dir/4_alignment_pinus/${id}.temp
-mv $dir/4_alignment_pinus/1_pinus_aligned_fastq/${id}_aligned.fastq.1.gz $dir/4_alignment_pinus/1_pinus_aligned_fastq/${id}_aligned_R1.fastq.gz
-mv $dir/4_alignment_pinus/1_pinus_aligned_fastq/${id}_aligned.fastq.2.gz $dir/4_alignment_pinus/1_pinus_aligned_fastq/${id}_aligned_R2.fastq.gz
-mv $dir/4_alignment_pinus/1_pinus_unaligned_fastq/${id}_unaligned.fastq.1.gz $dir/4_alignment_pinus/1_pinus_unaligned_fastq/${id}_unaligned_R1.fastq.gz
-mv $dir/4_alignment_pinus/1_pinus_unaligned_fastq/${id}_unaligned.fastq.2.gz $dir/4_alignment_pinus/1_pinus_unaligned_fastq/${id}_unaligned_R2.fastq.gz
+  rm -rf $dir/4_alignment_pinus/${id}.temp
+  mv $dir/4_alignment_pinus/1_pinus_aligned_fastq/${id}_aligned.fastq.1.gz $dir/4_alignment_pinus/1_pinus_aligned_fastq/${id}_aligned_R1.fastq.gz
+  mv $dir/4_alignment_pinus/1_pinus_aligned_fastq/${id}_aligned.fastq.2.gz $dir/4_alignment_pinus/1_pinus_aligned_fastq/${id}_aligned_R2.fastq.gz
+  mv $dir/4_alignment_pinus/1_pinus_unaligned_fastq/${id}_unaligned.fastq.1.gz $dir/4_alignment_pinus/1_pinus_unaligned_fastq/${id}_unaligned_R1.fastq.gz
+  mv $dir/4_alignment_pinus/1_pinus_unaligned_fastq/${id}_unaligned.fastq.2.gz $dir/4_alignment_pinus/1_pinus_unaligned_fastq/${id}_unaligned_R2.fastq.gz
 fi
 done
 
