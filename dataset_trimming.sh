@@ -10,7 +10,7 @@ mkdir $dir/cleandata
 mkdir $dir/fastqc_cleandata
 
 #  section 1: quality trimming
-####################################################
+##############################################################################################################
 #1. MD5 check
 #conda install perl-digest-md5
 #brew install md5sha1sum
@@ -29,11 +29,10 @@ ls $dir/rawdata/*.gz|cut -d "_" -f 1,2,3,4,5,6,7 |sort -u |while read id;do
    
 done
    
-
-
 cd $dir/fastqc_rawdata
 multiqc *.zip
 
+###############################################################################################################
 ##3. triming with trim_galore
 cd $dir/rawdata
 
@@ -50,6 +49,8 @@ done
 
 
 
+################################################################################################################
+##4. remove duplicate reads
 
 ls *.gz|cut -d"_" -f 1 |sort -u |while read id;do
    echo $id
@@ -72,21 +73,27 @@ ls *.gz|cut -d"_" -f 1 |sort -u |while read id;do
    fi      
 done
 
-
-trim_galore -q 25 --phred33 --stringency 3 --length 100 \
---paired ${id}_R1_001.fastq.gz    ${id}_R2_001.fastq.gz \
---gzip \
---cores 10 \
--o ../cleandata_trimglore  
+##If file is too big, need to splite the fq files
+seqkit split2 -p 2 -j 24   -1 52683.1.418549.ACTAAGAT-CCGCGGTT_val_1.fq -2 52683.1.418549.ACTAAGAT-CCGCGGTT_val_2.fq
 
 
 
 
 
 
-2>$dir/3_suillus_alignment/1_bowtie2_log_file/${id}_bowtie2.log
 
 
+
+
+
+
+
+
+
+
+
+#Other codes
+##############
 ls *.gz|cut -d"_" -f 1,2,3 |sort -u |while read id;do
 trimmomatic PE -threads 3 \
 ${id}_R1_001.fastq.gz ${id}_R2_001.fastq.gz \
