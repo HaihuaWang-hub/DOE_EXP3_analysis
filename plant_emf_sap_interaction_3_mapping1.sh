@@ -81,7 +81,18 @@ featureCounts -t exon -F GTF -g gene_id -p -M -T 24 -a $gtf_suicot -o $dir/3_sui
 featureCounts -t exon -F GTF -g gene_id -p -O -M -T 24 -a $gtf_suicot -o $dir/3_suillus_alignment/3_suillus_count_file/suillus_catalog_gene_id_count_overlap.txt *.bam  1>$dir/3_suillus_alignment/3_suillus_count_file/counts.catalog_gene_id_overlap.log 2>&1
 
 
+#extract mapping rate
+echo -e "fileName\trate(%)" > Suillus_mappingRate.txt
+for file in $(ls *.log); do
+  i=$(basename $file _bowtie2.log)
+  rate=$(tac $file |head -n 1 |cut -d"%" -f 1)
+  echo -e ${i}"\t"${rate} >> Suillus_mappingRate.txt
+done
+  
+  
+  
 
+done
 
 
 
