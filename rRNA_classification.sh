@@ -17,7 +17,9 @@ for file in $(ls *_1.fq.gz); do
 done
 
 
-
+for i in $(ls *.tsv); do
+   sed -i -e '/310291/d' $i
+done
 
 
 for file in $(ls *_1.fq.gz); do 
