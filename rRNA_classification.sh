@@ -3,15 +3,17 @@
 for file in $(ls *_1.fq.gz); do 
    i=$(echo $file |cut -d "_" -f 1)
    echo $i
-   workspace=$(echo microfisher/$i)
-   mkdir $workspace
-   MicroFisher preset --preset_db ITS+LSU \
-   --db_path /home/microbiome/data_storage/SATA3/Fisher_test/short_DBs/MicroFisher_DBs     \
-   --workspace ./  \
-   --paired ${i}_val_1.fq.gz ${i}_val_2.fq.gz \
-   --out_dir microfisher \
-   --out_prefix $i \
-   --threads 24; 
+   if [ ! -f microfisher/${i}_filtered_taxa_class.tsv ]; then
+      workspace=$(echo microfisher/$i)
+      mkdir $workspace
+      MicroFisher preset --preset_db ITS+LSU \
+         --db_path /home/microbiome/data_storage/SATA3/Fisher_test/short_DBs/MicroFisher_DBs     \
+         --workspace ./  \
+         --paired ${i}_val_1.fq.gz ${i}_val_2.fq.gz \
+         --out_dir microfisher \
+         --out_prefix $i \
+         --threads 24
+    fi
 done
 
 
