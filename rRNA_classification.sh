@@ -20,7 +20,26 @@ done
 
 
 
-
+for file in $(ls *_1.fq.gz); do 
+   i=$(echo $file |cut -d "_" -f 1)
+   echo $i
+   if [ ! -f microfisher/${i}_filtered_taxa_class.tsv ]; then
+      workspace=$(echo microfisher/$i)
+      mkdir $workspace
+      MicroFisher combine \
+         --workspace ./  \
+         --combine result_52682.1.418194.TGGATCGA-TATCGCAC_val_1.fq_min120_dbLSU_D1_report.tsv \
+                   result_52682.1.418194.TGGATCGA-TATCGCAC_val_1.fq_min120_dbLSU_D2_report.tsv \
+                   result_52682.1.418194.TGGATCGA-TATCGCAC_val_1.fq_min120_dbITS1_report.tsv \
+                   result_52682.1.418194.TGGATCGA-TATCGCAC_val_1.fq_min120_dbITS2_report.tsv \
+         --out_dir microfisher \
+         --out_prefix result_52682.1.418194.TGGATCGA-TATCGCAC
+         
+         
+         $i \
+         --threads 24
+    fi
+done
 
 
 
