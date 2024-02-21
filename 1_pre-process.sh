@@ -49,7 +49,7 @@ done
 ############################################################################################
 mkdir rRNA_removed_data
 remove_rRNA(){
- nohup for name in $(ls cleandata/*_val_1.fq.gz |cut -d "/" -f 2); do
+ for name in $(ls cleandata/*_val_1.fq.gz |cut -d "/" -f 2); do
   base=$(basename $name _val_1.fq.gz)
   if [ ! -f rRNA_removed_data/$base.non.rRNA_fwd.fq.gz ]; then
       mkdir rRNA_removed_data/$base
