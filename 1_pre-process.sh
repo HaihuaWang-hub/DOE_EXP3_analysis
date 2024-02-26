@@ -107,11 +107,14 @@ bowtie2-build --threads 4  Suicot1_AssemblyScaffolds_Repeatmasked.fasta Suicot_g
 ##################################################################
 
 function run_alignment () {
-work_dir="/home/microbiome/data_storage/SATA2/RNA_data/DOE_EXP3_JGI"
 
+file_folder=$(echo $work_dir/$file_folder)
 dir=$work_dir
 Suicot_genome="/home/microbiome/data_storage/SATA2/RNA_data/genome_reference/Suicot_genome"
 gtf_suicot="/home/microbiome/data_storage/SATA2/RNA_data/genome_reference/Suicot1_GeneCatalog_20171209.gtf"
+
+fwd=$1
+rev=$2
 
 mkdir $dir/3_suillus_alignment
 mkdir $dir/3_suillus_alignment/1_suillus_aligned_fastq
@@ -122,34 +125,44 @@ mkdir $dir/3_suillus_alignment/3_suillus_count_file
 mkdir $dir/3_suillus_alignment/2_suillus_bam_file
 mkdir $dir/3_suillus_alignment/1_suillus_unaligned_fastq
 
-ls subsample_data/*_R1.fq.gz |while read id; do
-  base=$(basename $id .subsample_R1.fq.gz)
-  if [ -f "$dir/3_suillus_alignment/3_suillus_count_file/${base}_suillus_gene_id_count.txt" ]; then
-      echo "${base} has been analyzed"
+  if [ -f "$dir/3_suillus_alignment/3_suillus_count_file/${fwd}_suillus_gene_id_count.txt" ]; then
+      echo "${fwd} has been analyzed"
   else
-     mkdir $dir/3_suillus_alignment/${base}.temp
+     mkdir $dir/3_suillus_alignment/${fwd}.temp
      time bowtie2 -p 24 -x $Suicot_genome \
-                  -1 subsample_data/${base}.subsample_R1.fq.gz \
-                  -2 subsample_data/${base}.subsample_R2.fq.gz \
-                  -S $dir/3_suillus_alignment/${base}.temp/${base}_suillus.sam \
-                  --al-conc-gz $dir/3_suillus_alignment/1_suillus_aligned_fastq/${base}_aligned.fastq.gz \
-                  --un-conc-gz $dir/3_suillus_alignment/1_suillus_unaligned_fastq/${base}_unaligned.fastq.gz \
-                  --met-file $dir/3_suillus_alignment/1_bowtie2_met_file/${base}_met.txt \
-                  2>$dir/3_suillus_alignment/1_bowtie2_log_file/${base}_bowtie2.log
+                  -1 $file_folder/$fwd \
+                  -2 $file_folder/$rev \
+                  -S $dir/3_suillus_alignment/${fwd}.temp/${fwd}_suillus.sam \
+                  --al-conc-gz $dir/3_suillus_alignment/1_suillus_aligned_fastq/${fwd}_aligned.fastq.gz \
+                  --un-conc-gz $dir/3_suillus_alignment/1_suillus_unaligned_fastq/${fwd}_unaligned.fastq.gz \
+                  --met-file $dir/3_suillus_alignment/1_bowtie2_met_file/${fwd}_met.txt \
+                  2>$dir/3_suillus_alignment/1_bowtie2_log_file/${fwd}_bowtie2.log
 
-     samtools sort -o bam -@ 3 -o $dir/3_suillus_alignment/2_suillus_bam_file/${base}_suillus.bam $dir/3_suillus_alignment/${base}.temp/${base}_suillus.sam
-     samtools flagstat -@ 3 $dir/3_suillus_alignment/${base}.temp/${base}_suillus.sam > $dir/3_suillus_alignment/2_bam_flagstat_file/${base}.flagstat
-     featureCounts -t exon -F GTF -g gene_id -T 4 -a $gtf_suicot -o $dir/3_suillus_alignment/3_suillus_count_file/${base}_suillus_gene_id_count.txt \
-                    $dir/3_suillus_alignment/2_suillus_bam_file/${base}_suillus.bam
-     rm -rf $dir/3_suillus_alignment/${base}.temp
-     mv $dir/3_suillus_alignment/1_suillus_aligned_fastq/${base}_aligned.fastq.1.gz $dir/3_suillus_alignment/1_suillus_aligned_fastq/${base}_aligned_R1.fastq.gz
-     mv $dir/3_suillus_alignment/1_suillus_aligned_fastq/${base}_aligned.fastq.2.gz $dir/3_suillus_alignment/1_suillus_aligned_fastq/${base}_aligned_R2.fastq.gz
+     samtools sort -o bam -@ 3 -o $dir/3_suillus_alignment/2_suillus_bam_file/${fwd}_suillus.bam $dir/3_suillus_alignment/${fwd}.temp/${fwd}_suillus.sam
+     samtools flagstat -@ 3 $dir/3_suillus_alignment/${fwd}.temp/${fwd}_suillus.sam > $dir/3_suillus_alignment/2_bam_flagstat_file/${fwd}.flagstat
+     featureCounts -t exon -F GTF -g gene_id -T 4 -a $gtf_suicot -o $dir/3_suillus_alignment/3_suillus_count_file/${fwd}_suillus_gene_id_count.txt \
+                    $dir/3_suillus_alignment/2_suillus_bam_file/${fwd}_suillus.bam
+     rm -rf $dir/3_suillus_alignment/${fwd}.temp
+     mv $dir/3_suillus_alignment/1_suillus_aligned_fastq/${fwd}_aligned.fastq.1.gz $dir/3_suillus_alignment/1_suillus_aligned_fastq/${fwd}_aligned_R1.fastq.gz
+     mv $dir/3_suillus_alignment/1_suillus_aligned_fastq/${fwd}_aligned.fastq.2.gz $dir/3_suillus_alignment/1_suillus_aligned_fastq/${fwd}_aligned_R2.fastq.gz
   fi
-done
 }
 export -f run_alignment
 
-nohup bash -c run_alignment  & 
+work_dir="/home/microbiome/data_storage/SATA3/RNA_data/FISH_RNA/SuiPinnscriptome_6_download/SuiPinnscriptome_6"
+file_folder="rRNA_removed_data"
+
+ls *.fq.gz | cut -d "." -f 1,2,3,4 |sort -u |while read id
+ do
+   echo $id
+   fwd=$(echo ${id}.non.rRNA_fwd.fq.gz)
+   rev=$(echo ${id}.non.rRNA_rev.fq.gz)
+   echo $fwd $rev
+   run_alignment $fwd $rev
+done
+  
+
+
 
 dir="/home/microbiome/data_storage/SATA2/RNA_data/DOE_EXP3"
 gtf_suicot="/home/microbiome/data_storage/SATA2/RNA_data/genome_reference/Suicot1_GeneCatalog_20171209.gtf"
