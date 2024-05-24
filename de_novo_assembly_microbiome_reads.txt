@@ -39,7 +39,14 @@ fastuniq -i $file -t q -o $base.rmdup_R1.fastq -p $base.rmdup_R2.fastq -c 0
 
 done
 
+for file in $(ls file*)
+do
+base=$file
+echo $base
 
+fastuniq -i $file -t p -o  $base.rmdup.fasta -c 0
+
+done
 
 #############################################
 #subsample the sequencing reads
