@@ -29,6 +29,18 @@ export -f rmdup
 time parallel -j 24 --eta --load 99% --noswap  rmdup ::: $(ls *.nonrRNA_fwd.fq)
 
 
+#list some or all files (absolute path) in a doc named "files" depending on the RAM size, then do duplicate reads removal
+for file in $(ls file*)
+do
+base=$file
+echo $base
+
+fastuniq -i $file -t q -o $base.rmdup_R1.fastq -p $base.rmdup_R2.fastq -c 0
+
+done
+
+
+
 #############################################
 #subsample the sequencing reads
 #############################################
