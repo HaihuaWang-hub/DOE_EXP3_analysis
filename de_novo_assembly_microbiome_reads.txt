@@ -48,6 +48,20 @@ fastuniq -i $file -t p -o  $base.rmdup.fasta -c 0
 
 done
 
+
+for i in $(ls *_fwd.fq)
+do
+base=$(basename $i .non.rRNA_fwd.fq)
+echo $base
+bbmerge.sh in1=$base.non.rRNA_fwd.fq in2=$base.non.rRNA_rev.fq out=$base.non.rRNA.merged.fq
+dedupe.sh in=$base.non.rRNA.merged.fq  out=$base.non.rRNA.merged_rmdup.fq
+done
+
+
+
+
+
+
 #############################################
 #subsample the sequencing reads
 #############################################
