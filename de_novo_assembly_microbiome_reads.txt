@@ -3,12 +3,12 @@
 ##########################
 ############################################
 # The best way to remove the duplicate reads
-for i in $(ls *_fwd.fq)
+for i in $(ls *_fwd.fq.gz)
 do
-base=$(basename $i .non.rRNA_fwd.fq)
+base=$(basename $i .non.rRNA_fwd.fq.gz)
 echo $base
-bbmerge.sh in1=$base.non.rRNA_fwd.fq in2=$base.non.rRNA_rev.fq out=$base.non.rRNA.merged.fq
-dedupe.sh in=$base.non.rRNA.merged.fq  out=$base.non.rRNA.merged_rmdup.fq
+bbmerge.sh in1=$base.non.rRNA_fwd.fq.gz in2=$base.non.rRNA_rev.fq.gz out=$base.non.rRNA.merged.fq.gz
+dedupe.sh in=$base.non.rRNA.merged.fq.gz  out=$base.non.rRNA.merged_rmdup.fq.gz
 done
 
 Trinity --CPU 24 \
