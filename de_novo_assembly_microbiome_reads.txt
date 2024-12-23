@@ -1,6 +1,31 @@
 #########################33
 #combine the reads and remove the duplicates
 ##########################
+############################################
+# The best way to remove the duplicate reads
+for i in $(ls *_fwd.fq)
+do
+base=$(basename $i .non.rRNA_fwd.fq)
+echo $base
+bbmerge.sh in1=$base.non.rRNA_fwd.fq in2=$base.non.rRNA_rev.fq out=$base.non.rRNA.merged.fq
+dedupe.sh in=$base.non.rRNA.merged.fq  out=$base.non.rRNA.merged_rmdup.fq
+done
+
+Trinity --CPU 24 \
+    --seqType fq \
+    --left  dup_removedmerged_paried_R1.fastq   \
+    --right dup_removedmerged_paried_R1.fastq  \
+    --max_memory 15G \
+    --output Trinity_output_subsample
+
+SOAPdenovo-Trans-31mer all -s config_file -k 31 -o SOAPdenovo31/output_prefix_SOAPdenovo
+SOAPdenovo-Trans-127mer all -s config_file -k 127 -o SOAPdenovo127/output_prefix_SOAPdenovo
+
+dedupe.sh in=output_prefix_SOAPdenovo.scafSeq  out=output_prefix_SOAPdenovo_rmdup.scafSeq
+
+
+
+########################################################
 for i in *.gz ;do
    pigz -d $i
 done
@@ -49,19 +74,6 @@ fastuniq -i $file -t p -o  $base.rmdup.fasta -c 0
 done
 
 
-
-for i in $(ls *_fwd.fq)
-do
-base=$(basename $i .non.rRNA_fwd.fq)
-echo $base
-bbmerge.sh in1=$base.non.rRNA_fwd.fq in2=$base.non.rRNA_rev.fq out=$base.non.rRNA.merged.fq
-dedupe.sh in=$base.non.rRNA.merged.fq  out=$base.non.rRNA.merged_rmdup.fq
-done
-
-SOAPdenovo-Trans-31mer all -s config_file -k 31 -o SOAPdenovo31/output_prefix_SOAPdenovo
-SOAPdenovo-Trans-127mer all -s config_file -k 127 -o SOAPdenovo127/output_prefix_SOAPdenovo
-
-dedupe.sh in=output_prefix_SOAPdenovo.scafSeq  out=output_prefix_SOAPdenovo_rmdup.scafSeq
 
 
 
