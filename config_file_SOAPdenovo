@@ -1,0 +1,27 @@
+#maximal read length
+max_rd_len=500
+[LIB]
+#maximal read length in this lib
+rd_len_cutof=500
+#average insert size
+avg_ins=200
+#if sequence needs to be reversed 
+reverse_seq=0
+#in which part(s) the reads are used
+asm_flags=3
+#minimum aligned length to contigs for a reliable read location (at least 32 for short insert size)
+map_len=32
+#fastq file for read 1 
+#q1=/path/**LIBNAMEA**/fastq_read_1.fq
+#fastq file for read 2 always follows fastq file for read 1
+#q2=/path/**LIBNAMEA**/fastq_read_2.fq
+#fasta file for read 1 
+#f1=/path/**LIBNAMEA**/fasta_read_1.fa
+#fastq file for read 2 always follows fastq file for read 1
+#f2=/path/**LIBNAMEA**/fasta_read_2.fa
+#fastq file for single reads
+q=/data_storage/SATA2/haihua/RNA_data/Mujahid/rRNA_removed_data/combine.fq
+#fasta file for single reads
+#f=/data_storage/SATA2/haihua/RNA_data/Mujahid/rRNA_removed_data/combine.fasta
+#a single fasta file for paired reads
+#p=/path/**LIBNAMEA**/pairs_in_one_file.fa
