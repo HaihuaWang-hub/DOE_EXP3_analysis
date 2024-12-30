@@ -11,12 +11,31 @@ bbmerge.sh in1=$base.non.rRNA_fwd.fq.gz in2=$base.non.rRNA_rev.fq.gz out=$base.n
 dedupe.sh in=$base.non.rRNA.merged.fq.gz  out=$base.non.rRNA.merged_rmdup.fq.gz
 done
 
+#Combine the sequences from samples
+cat *.fq.gz > combined.fq.gz
+seqkit split2 All_seq_non.rRNA.merged_rmdup.fq.gz -p 8
+dedupe.sh in=All_seq_non.rRNA.merged_rmdup_rmdup.part_001_002.fq.gz out=All_seq_non.rRNA.merged.part_001_002.fq.gz
+dedupe.sh in=All_seq_non.rRNA.merged_rmdup.part_002.fq.gz out=All_seq_non.rRNA.merged_rmdup_rmdup.part_002.fq.gz
+dedupe.sh in=All_seq_non.rRNA.merged_rmdup.part_003.fq.gz out=All_seq_non.rRNA.merged_rmdup_rmdup.part_003.fq.gz
+dedupe.sh in=All_seq_non.rRNA.merged_rmdup.part_004.fq.gz out=All_seq_non.rRNA.merged_rmdup_rmdup.part_004.fq.gz
+dedupe.sh in=All_seq_non.rRNA.merged_rmdup.part_005.fq.gz out=All_seq_non.rRNA.merged_rmdup_rmdup.part_005.fq.gz
+dedupe.sh in=All_seq_non.rRNA.merged_rmdup.part_006.fq.gz out=All_seq_non.rRNA.merged_rmdup_rmdup.part_006.fq.gz
+dedupe.sh in=All_seq_non.rRNA.merged_rmdup.part_007.fq.gz out=All_seq_non.rRNA.merged_rmdup_rmdup.part_007.fq.gz
+dedupe.sh in=All_seq_non.rRNA.merged_rmdup.part_008.fq.gz out=All_seq_non.rRNA.merged_rmdup_rmdup.part_008.fq.gz
+seqtk seq -a combined.fq.gz > combined.fa
+
+
+
+dedupe.sh in=All_seq_non.rRNA.merged_rmdup.fq.gz  out=All_seq_non.rRNA.merged_rmdup_rmdup.fq.gz
+
+
+seqtk seq -L 120 -a  All_seq_non.rRNA.merged_rmdup.fq.gz   >  All_seq_non.rRNA.merged_rmdup.fa
+
 Trinity --CPU 24 \
-    --seqType fq \
-    --left  dup_removedmerged_paried_R1.fastq   \
-    --right dup_removedmerged_paried_R1.fastq  \
-    --max_memory 15G \
-    --output Trinity_output_subsample
+    --seqType fa \
+    --single All_seq_non.rRNA.merged_rmdup.fa   \
+    --max_memory 300G \
+    --output /home/microbiome/data_storage/SATA3/RNA_data/Liu_RNA/Trinity_output
 
 SOAPdenovo-Trans-31mer all -s config_file -k 31 -o SOAPdenovo31/output_prefix_SOAPdenovo
 SOAPdenovo-Trans-127mer all -s config_file -k 127 -o SOAPdenovo127/output_prefix_SOAPdenovo
