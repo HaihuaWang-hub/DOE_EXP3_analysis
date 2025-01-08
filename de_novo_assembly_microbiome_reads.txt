@@ -37,8 +37,8 @@ Trinity --CPU 24 \
     --max_memory 300G \
     --output /home/microbiome/data_storage/SATA3/RNA_data/Liu_RNA/Trinity_output
 
-SOAPdenovo-Trans-31mer all -s config_file_SOAPdenovo -k 31 -o SOAPdenovo31/output_prefix_SOAPdenovo
-SOAPdenovo-Trans-127mer all -s config_file_SOAPdenovo -k 127 -o SOAPdenovo127/output_prefix_SOAPdenovo
+SOAPdenovo-Trans-31mer all -s config_file_SOAPdenovo -k 31 -p 24 -o /data_storage/SATA3/haihua/RNA_data/Liu_RNA/SOAPdenovo31/output_prefix_SOAPdenovo
+SOAPdenovo-Trans-127mer all -s config_file_SOAPdenovo -k 127 -p 24 -o /data_storage/SATA3/haihua/RNA_data/Liu_RNA/SOAPdenovo127/output_prefix_SOAPdenovo
 
 dedupe.sh in=output_prefix_SOAPdenovo.scafSeq  out=output_prefix_SOAPdenovo_rmdup.scafSeq
 
