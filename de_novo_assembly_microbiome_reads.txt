@@ -40,9 +40,24 @@ Trinity --CPU 24 \
 SOAPdenovo-Trans-31mer all -s config_file_SOAPdenovo -k 31 -p 24 -o /data_storage/SATA3/haihua/RNA_data/Liu_RNA/SOAPdenovo31/output_prefix_SOAPdenovo
 SOAPdenovo-Trans-127mer all -s config_file_SOAPdenovo -k 127 -p 24 -o /data_storage/SATA3/haihua/RNA_data/Liu_RNA/SOAPdenovo127/output_prefix_SOAPdenovo
 
+#Remove the duplicate sequences
+/home/sunny/tools/trinityrnaseq/util/misc/get_longest_isoform_seq_per_trinity_gene.pl Trinity.fasta > trinity_unigene.fasta
+cd-hit-est -i Trinity.fasta -o Trinity.cdhit_unigene.fa -c 0.95 -n 9 -M 1500 -T 12
 dedupe.sh in=output_prefix_SOAPdenovo.scafSeq  out=output_prefix_SOAPdenovo_rmdup.scafSeq
 
 
+#test the quality of assembly
+bowtie2-build --threads 24  trinity_unigene.fasta trinity_unigene
+fwd="/media/microbiome/T9/XInwei_Liu_RNA/rRNA_removed_data/C-RI-S2_S29.non.rRNA_fwd.fq.gz"
+rev="/media/microbiome/T9/XInwei_Liu_RNA/rRNA_removed_data/C-RI-S2_S29.non.rRNA_rev.fq.gz"
+bowtie2 -p 24 -x trinity_unigene \
+           -1 $fwd \
+           -2 $rev \
+           -S ./test_trinity.sam \
+           2>./Trinity_bowtie2.log
+
+
+#compare their mapping rate
 
 ########################################################
 for i in *.gz ;do
