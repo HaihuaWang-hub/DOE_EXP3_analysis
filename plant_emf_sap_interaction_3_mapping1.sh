@@ -181,11 +181,22 @@ Pintaeda_transcript="/home/microbiome/data_storage/SATA2/plant_genome/pita/Pita.
   --seqType fq \
   --samples_file file_list \
   --est_method RSEM \
-  --aln_method bowtie \
+  --aln_method bowtie2 \
   --trinity_mode \
   --prep_reference \
   --output_dir 4_pinus_rsem_estimate_outdir \
   --thread_count 24
+
+
+/home/microbiome/miniconda3/envs/RNASeq/bin/abundance_estimates_to_matrix.pl \
+  --est_method RSEM \
+  --cross_sample_norm TMM \
+  --quant_files file.listing_target_files.txt \
+  --gene_trans_map /home/microbiome/data_storage/SATA2/RNA_data/Liu_RNA/Trinity_output/Trinity.fasta.gene_trans_map \
+  --name_sample_by_basedir \
+  --basedir_index basedir_index.txt \
+  --out_prefix  Quantification_Result
+
 
 
 #  section 3: mapping pinus #bowtie2
