@@ -51,20 +51,19 @@ for i in $(ls cleandata/*_val_1.fq.gz); do
    base=$(basename $i _val_1.fq.gz)
    echo "start to process the file ${base}"
   if [ ! -d Fisher_classification/${base}_filtered_taxa_genus.tsv ]; then
-   MicroFisher preset --workspace MicroFisher_workspace \
-                      --preset_db ITS+LSU \
-                      --min 90 \
+   MicroFisher preset --preset_db ITS+LSU --verbose \
+                      --db_path /home/microbiome/data_storage/SATA3/Fisher_test/MicroFisher/MicroFisher_DBs \
+                      --min 120 \
+                      --workspace MicroFisher_workspace \
                       --paired cleandata/${base}_val_1.fq.gz  cleandata/${base}_val_2.fq.gz \
                       --out_dir Fisher_classification \
                       --out_prefix ${base} \
-                      --db_path /home/microbiome/data_storage/SATA3/Fisher_test/MicroFisher/MicroFisher_DBs \
                       --threads 24
     echo "processing of ${base} has been done"
    else
     echo "${base} was analyzed"
    fi
  done
-
 
 
 
