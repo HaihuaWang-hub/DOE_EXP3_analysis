@@ -54,8 +54,8 @@ for i in $(ls cleandata/*_val_1.fq.gz); do
    MicroFisher preset --preset_db ITS+LSU --verbose \
                       --db_path /home/microbiome/data_storage/SATA3/Fisher_test/MicroFisher/MicroFisher_DBs \
                       --min 120 \
-                      --workspace MicroFisher_workspace \
-                      --paired cleandata/${base}_val_1.fq.gz  cleandata/${base}_val_2.fq.gz \
+                      --workspace cleandata \
+                      --paired ${base}_val_1.fq.gz  ${base}_val_2.fq.gz \
                       --out_dir Fisher_classification \
                       --out_prefix ${base} \
                       --threads 24
