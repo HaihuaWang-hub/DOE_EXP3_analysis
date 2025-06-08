@@ -112,6 +112,23 @@ done
 
 
 
+############################################33
+##
+#################################################
+Trinity --CPU 24 \
+    --seqType fq \
+    --samples_file file_list  \
+    --max_memory 150G \
+    --output trinity_output
+
+/home/sunny/tools/trinityrnaseq/util/align_and_estimate_abundance.pl --transcripts trinity_output/Trinity.fasta \
+                            --prep_reference \
+                            --seqType fq  \
+                            --samples_file file_list \
+                            --est_method RSEM --aln_method bowtie2 \
+                            --trinity_mode --output_dir rsem_outdir
+
+
 #############################################
 #subsample the sequencing reads
 #############################################
