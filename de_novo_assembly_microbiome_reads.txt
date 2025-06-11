@@ -113,7 +113,7 @@ done
 
 
 ############################################33
-##
+##Assembly using Trinity
 #################################################
 Trinity --CPU 24 \
     --seqType fq \
@@ -121,6 +121,8 @@ Trinity --CPU 24 \
     --max_memory 150G \
     --output trinity_output
 
+####################################
+#Gene expression quantification
 /home/sunny/tools/trinityrnaseq/util/align_and_estimate_abundance.pl --transcripts trinity_output/Trinity.fasta \
                             --prep_reference \
                             --seqType fq  \
@@ -136,13 +138,25 @@ abundance_estimates_to_matrix.pl --est_method RSEM \
       --quant_files quant_files.txt \
       --name_sample_by_basedir
 
+
+
+################
+#Get gene expression distribution
+/home/sunny/tools/trinityrnaseq/util/misc/count_matrix_features_given_MIN_TPM_threshold.pl \
+          RSEM.isoform.TPM.not_cross_norm > RSEM_matrix.TPM.not_cross_norm.counts_by_min_TPM
+ % R
+ > data = read.table("/data_storage/SATA3/haihua/RNA_data/FISH_soil/RSEM_matrix.TPM.not_cross_norm.counts_by_min_TPM", header=T)
+ > plot(data, xlim=c(-100,0), ylim=c(0,100000), t='b')
+
+##################
+#Filter low expression genes
 /home/sunny/tools/trinityrnaseq/util/get_Trinity_gene_to_trans_map.pl filtered.Trinity.fasta > filtered.Trinity.fasta.gene-trans-map.txt
 filter_low_expr_transcripts.pl \
-  --matrix rsem_out/Trinity.isoforms.results \
-  --transcripts Trinity.fasta \
-  --min_expr_any 1 >  Trinity_filtered_low_expression.fasta
+  --matrix RSEM.isoform.counts.matrix  \
+  --transcripts trinity_output/Trinity.fasta \
+  --min_expr_any 5 >  Trinity_filtered_low_expression.fasta
 
-
+#do the gene expression quantification again!
 
 
 
