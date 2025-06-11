@@ -129,6 +129,23 @@ Trinity --CPU 24 \
                             --trinity_mode --output_dir rsem_outdir
 
 
+find * -name '*.isoforms.results' > quant.file
+
+abundance_estimates_to_matrix.pl --est_method RSEM \
+      --gene_trans_map /home/microbiome/datastorge/SATA3/RNA_data/FISH_soil/trinity_output/Trinity.fasta.gene_trans_map \
+      --quant_files quant_files.txt \
+      --name_sample_by_basedir
+
+/home/sunny/tools/trinityrnaseq/util/get_Trinity_gene_to_trans_map.pl filtered.Trinity.fasta > filtered.Trinity.fasta.gene-trans-map.txt
+filter_low_expr_transcripts.pl \
+  --matrix rsem_out/Trinity.isoforms.results \
+  --transcripts Trinity.fasta \
+  --min_expr_any 1 >  Trinity_filtered_low_expression.fasta
+
+
+
+
+
 #############################################
 #subsample the sequencing reads
 #############################################
