@@ -60,6 +60,8 @@ for i in $(ls cleandata/*_val_1.fq.gz); do
                       --out_prefix ${base} \
                       --threads 24
     echo "processing of ${base} has been done"
+
+    rm -f Fisher_classification/*_output.txt
    else
     echo "${base} was analyzed"
    fi
