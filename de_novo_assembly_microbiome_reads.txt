@@ -135,7 +135,7 @@ find * -name '*.isoforms.results' > quant.file
 
 abundance_estimates_to_matrix.pl --est_method RSEM \
       --gene_trans_map /home/microbiome/datastorge/SATA3/RNA_data/FISH_soil/trinity_output/Trinity.fasta.gene_trans_map \
-      --quant_files quant_files.txt \
+      --quant_files quant.file \
       --name_sample_by_basedir
 
 
@@ -150,12 +150,13 @@ abundance_estimates_to_matrix.pl --est_method RSEM \
 
 ##################
 #Filter low expression genes
-/home/sunny/tools/trinityrnaseq/util/get_Trinity_gene_to_trans_map.pl filtered.Trinity.fasta > filtered.Trinity.fasta.gene-trans-map.txt
 filter_low_expr_transcripts.pl \
   --matrix RSEM.isoform.counts.matrix  \
   --transcripts trinity_output/Trinity.fasta \
   --min_expr_any 5 >  Trinity_filtered_low_expression.fasta
 
+
+get_Trinity_gene_to_trans_map.pl Trinity_filtered_low_expression.fasta > filtered.Trinity.fasta.gene-trans-map
 #do the gene expression quantification again!
 
 
